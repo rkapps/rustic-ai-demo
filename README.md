@@ -1,59 +1,119 @@
-# AngularStarter
+# Angular Starter
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
+A production-ready Angular starter template with a built-in chat feature, Firebase auth, and a pre-configured component library.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- ⚡ Angular 21 with standalone components
+- 💬 Chat feature (list, detail, new chat) using `ngx-twang-ui`
+- 🔐 Firebase Authentication with auth guard
+- 🎨 Tailwind CSS + Flowbite
+- 📦 Lazy-loaded routes
+- 🔔 Notification service
+- 🌙 Dark mode support
+
+## Prerequisites
+
+- Node.js 22+
+- Angular CLI 21
+- Access to [ngx-twang-ui](https://github.com/your-org/ngx-twang-ui-repo)
+
+## Getting Started
+
+### 1. Clone the repo
 
 ```bash
+git clone https://github.com/your-org/angular-starter.git my-new-app
+cd my-new-app
+```
+
+### 2. Clone and build the component library
+
+```bash
+git clone https://github.com/your-org/ngx-twang-ui-repo.git ../ngx-twang-ui-repo
+cd ../ngx-twang-ui-repo
+npm install
+ng build ngx-twang-ui
+cd ../my-new-app
+```
+
+### 3. Configure Firebase
+
+Copy the environment template and fill in your Firebase project details:
+
+```bash
+cp src/environments/environment.template.ts src/environments/environment.ts
+```
+
+```ts
+// src/environments/environment.ts
+export const environment = {
+  firebase: {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    appId: "YOUR_APP_ID"
+  }
+};
+```
+
+### 4. Install and run
+
+```bash
+npm install
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Project Structure
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```
+src/
+├── app/
+│   ├── core/
+│   │   ├── guards/         # auth.guard
+│   │   └── services/       # data, notification services
+│   ├── models/             # Chat, LlmProvider etc.
+│   ├── pages/
+│   │   └── chats/          # chat list, detail, new chat
+│   └── app.routes.ts
+├── environments/
+│   ├── environment.ts           # your local config (gitignored)
+│   └── environment.template.ts  # safe to commit
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Component Library
 
-```bash
-ng generate --help
+This app uses [ngx-twang-ui](https://github.com/your-org/ngx-twang-ui-repo), a local Angular component library. It is referenced as a `file:` dependency in `package.json`:
+
+```json
+"ngx-twang-ui": "file:../ngx-twang-ui-repo/dist/ngx-twang-ui"
 ```
 
-## Building
+> ⚠️ The library must be built before running this app. See step 2 above.
 
-To build the project run:
+### Important: Keep Angular versions in sync
 
-```bash
-ng build
+The library and this app must use the **exact same Angular version**. All `@angular/*` packages are pinned without `^` or `~` for this reason.
+
+## VS Code Setup
+
+A `.vscode/settings.json` is included to prevent Angular internal chunk files from being auto-imported:
+
+```json
+{
+  "typescript.preferences.autoImportFileExcludePatterns": [
+    "@angular/*/types/*",
+    "@angular/*/esm*",
+    "@angular/*/fesm*"
+  ]
+}
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## New Project Checklist
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- [ ] Update `name` in `package.json`
+- [ ] Clone and build `ngx-twang-ui-repo`
+- [ ] Add Firebase config to `environment.ts`
+- [ ] Run `npm install`
+- [ ] Run `ng serve`
