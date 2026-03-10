@@ -17,10 +17,9 @@ export class AppComponent {
   notify = inject(NotificationService);
   public bcService = inject(BreadcrumbService);
 
-  protected readonly title = signal('FinanceNg');
+  protected readonly title = signal('Angular Starter');
 
   constructor() {
-    console.log("reached");
   }
 
   isOpen = signal(false);

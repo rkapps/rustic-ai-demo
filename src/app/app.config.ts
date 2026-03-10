@@ -11,18 +11,7 @@ import { MarkdownModule, MarkedOptions, MARKED_OPTIONS, MarkedRenderer, SANITIZE
 // Firebase Imports
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
-
-const firebaseConfig =
-{
-  "projectId": "rkfinance-413505",
-  "appId": "1:235563602060:web:2c6f26a4c8c1f8357c2ba9",
-  "storageBucket": "rkfinance-413505.appspot.com",
-  "apiKey": "AIzaSyCmn7TwCguaKb_GKn_Yl_nj0rfSD-gVgIk",
-  "authDomain": "rkfinance-413505.firebaseapp.com",
-  "messagingSenderId": "235563602060",
-  "measurementId": "G-VJBQL2GZFH"
-}
-;
+import { environment } from '../environments/environment';
 
 
 
@@ -32,7 +21,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withInterceptors([errorInterceptor, statusInterceptor])),
     provideBrowserGlobalErrorListeners(),
-    provideFirebaseApp(() => initializeApp(firebaseConfig)),
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
 
     provideAuth(() => getAuth()),
 
