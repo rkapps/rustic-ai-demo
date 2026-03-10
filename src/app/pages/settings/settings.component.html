@@ -1,0 +1,99 @@
+<main class="max-w-4xl mx-auto px-4 py-12">
+    @if (userState.isLoading()) {
+    <div class="flex flex-col items-center justify-center py-20">
+        <!-- Blue spinning circle -->
+        <svg class="animate-spin h-10 w-10 text-blue-600" xmlns="http://www.w3.org" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+        </svg>
+        <p class="mt-4 text-sm font-medium text-gray-500 italic">Checking your profile...</p>
+    </div>
+    } @else {
+    <div class="w-full max-w-2xl mb-12 relative">
+        <div class="absolute top-5 w-full h-0.5 bg-gray-200 -z-10"></div>
+        <div class="absolute top-5 h-0.5 bg-blue-600 transition-all duration-500 -z-10" [style.width]="progressWidth()">
+        </div>
+
+        <div class="flex justify-between items-center">
+            @for (step of [1, 2, 3]; track step) {
+            <div class="flex flex-col items-center">
+                <div [class]="currentStep() >= step ? 'bg-blue-600 text-white' : 'bg-white border-2 border-gray-200 text-gray-400'"
+                    class="size-10 rounded-full flex items-center justify-center font-bold transition-colors duration-300">
+                    @if (currentStep() > step) { <span>✓</span> } @else { {{step}} }
+                </div>
+                <span class="text-xs font-medium mt-2 text-gray-500">
+                    {{ step === 1 ? 'Profile' : step === 2 ? 'Prefs' : 'Security' }}
+                </span>
+            </div>
+            }
+        </div>
+    </div>
+
+    <!-- FORM CARD (Focused) -->
+    <div class="w-full max-w-3xl bg-white border border-gray-100 shadow-sm rounded-2xl p-8 transition-all">
+        <form [formGroup]="settingsForm">
+
+            <!-- STEP 1: PROFILE -->
+
+            @if (currentStep() === 1) {
+            <div formGroupName="profile"
+                [class]="direction() === 'right' ? 'slide-in-from-right-8' : 'slide-in-from-left-8'"
+                class="animate-in fade-in duration-500">
+                <h2 class="text-xl font-bold mb-4">Tell us about yourself</h2>
+                <div class="space-y-4">
+                    <input formControlName="displayName" placeholder="Display Name"
+                        class="w-full p-3 border rounded-lg outline-blue-500">
+                    <textarea formControlName="bio" placeholder="Short bio..."
+                        class="w-full p-3 border rounded-lg h-32 outline-blue-500"></textarea>
+                </div>
+            </div>
+            }
+
+            <!-- STEP 2: PREFERENCES -->
+            @if (currentStep() === 2) {
+            <div formGroupName="preferences"
+                [class]="direction() === 'right' ? 'slide-in-from-right-8' : 'slide-in-from-left-8'"
+                class="animate-in fade-in duration-500">
+                <h2 class="text-xl font-bold mb-4">App Preferences</h2>
+                <label class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg cursor-pointer">
+                    <input type="checkbox" formControlName="notifications" class="size-5 accent-blue-600">
+                    <span>Enable Email Notifications</span>
+                </label>
+            </div>
+            }
+
+            <!-- STEP 3: SECURITY -->
+            @if (currentStep() === 3) {
+            <div formGroupName="security"
+                [class]="direction() === 'right' ? 'slide-in-from-right-8' : 'slide-in-from-left-8'"
+                class="animate-in fade-in duration-500">
+                <h2 class="text-xl font-bold mb-4">Security Check</h2>
+                <p class="text-gray-600 mb-4">Finalize your account security settings.</p>
+                <!-- Security toggle here -->
+            </div>
+            }
+
+            <!-- NAVIGATION BUTTONS -->
+            <div class="flex justify-between mt-10">
+
+                <!-- <button type="button" (click)="prevStep()" [disabled]="currentStep() === 1"
+                    class="px-6 py-2 text-gray-500 font-medium disabled:opacity-0">Back</button> -->
+                <twang-button variant="primary" label="Next" (btnClick)="prevStep()"
+                    [disabled]="currentStep() === 1"></twang-button>
+
+                @if (currentStep() < 3) { <!-- <button type="button" (click)="nextStep()"
+                    class="px-8 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700">Next</button> -->
+                    <twang-button label="Next" (btnClick)="nextStep()"></twang-button>
+
+                    } @else {
+                    <!-- <button type="button" (click)="finish()"
+                        class="px-8 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700">Finish &
+                        Unlock</button> -->
+                    <twang-button label="Finish" (btnClick)="finish()" [isLoading]="isSaving()"></twang-button>
+                    }
+            </div>
+        </form>
+    </div> }
+</main>

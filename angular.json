@@ -24,6 +24,11 @@
                 "input": "public"
               }
             ],
+            "preserveSymlinks": true,
+            "allowedCommonJsDependencies": [
+              "ngx-twang-ui"
+            ],
+            "aot": true,
             "styles": [
               "src/styles.css"
             ]
@@ -42,7 +47,13 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]              
             },
             "development": {
               "optimization": false,

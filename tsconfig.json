@@ -13,13 +13,17 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "module": "preserve"
-  },
+    "module": "preserve",
+    "preserveSymlinks": true,
+    "paths": {
+      "ngx-twang-ui": ["../libs/ngx-twang-ui-repo/dist/ngx-twang-ui"]
+    }
+   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
-    "strictTemplates": true
+    "strictTemplates": false, 
+    "strictInputAccessModifiers": false 
   },
   "files": [],
   "references": [

@@ -1,0 +1,183 @@
+@if (notify.isLoading()) {
+<div class="fixed top-0 left-0 w-full h-1 z-[100] bg-blue-100 overflow-hidden">
+    <div class="h-full bg-blue-600 animate-progress origin-left"></div>
+</div>
+}
+
+<div class="min-h-screen bg-gray-50 flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 px-1 md:px-4 sticky top-0 z-50 h-14 flex items-center">
+
+        <div class="fixed top-16 right-6 z-100 flex flex-col gap-3 w-full max-w-sm pointer-events-none">
+            @for (toast of notify.notifications(); track toast.id) {
+            <!-- pointer-events-auto allows clicking the 'close' button while parent is transparent -->
+            <div class="pointer-events-auto animate-in slide-in-from-right-10 fade-in duration-300 shadow-2xl border-l-4 rounded-lg bg-white p-4"
+                [ngClass]="{
+                     'border-red-500 text-red-900 bg-red-50': toast.type === 'error',
+                     'border-green-500 text-green-900 bg-green-50': toast.type === 'success',
+                     'border-blue-500 text-blue-900 bg-blue-50': toast.type === 'info'
+                   }">
+                <div class="flex items-start gap-3">
+                    <!-- Optional Icon -->
+                    <div class="flex-1 text-sm font-semibold">
+                        {{ toast.message }}
+                    </div>
+                    <button (click)="notify.remove(toast.id)" class="text-gray-400 hover:text-gray-600">
+                        <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M6 18L18 6M6 6l12 12" stroke-width="2" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            }
+        </div>
+
+
+        <!-- Main Container -->
+        <div class="max-w-[1920px] w-full mx-auto md:px-6 lg:px-12 flex items-center justify-between relative ">
+
+            <!-- 1. LEFT SECTION: Hamburger + Logo -->
+            <div class="flex items-center gap-2">
+                <button (click)="toggleMenu()" type="button"
+                    class="p-2 text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none mr-1">
+                    <svg class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
+
+                <a routerLink="/" class="flex items-center">
+                    <span class="text-2xl font-medium text-primary-800">{{title()}}</span>
+                </a>
+
+                <!-- 2. DESKTOP NAV (Integrated into the row) -->
+                <!-- 
+               Hidden on mobile. 
+               On md: flex, static position, no width restriction.
+            -->
+                <div class="hidden md:flex md:items-center md:ml-8">
+                    <ul class="flex flex-row space-x-6 text-sm font-medium">
+                        <li><a routerLink="/home" routerLinkActive="!text-accent-600 !font-bold scale-105"
+                                [routerLinkActiveOptions]="{exact: false}"
+                                class="text-gray-500 transition-all duration-300 hover:text-accent-500">Home</a>
+                        </li>
+                        <li><a routerLink="/dashboard" routerLinkActive="!text-accent-600 !font-bold scale-105"
+                                [routerLinkActiveOptions]="{exact: false}"
+                                class="text-gray-500 transition-all duration-300 hover:text-accent-500">Dashboard</a></li>
+                        <li><a routerLink="/chats" routerLinkActive="!text-accent-600 !font-bold scale-105"
+                                class="text-gray-500 transition-all duration-300 hover:text-accent-500">Chats</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 3. RIGHT SECTION: User Dropdown (Always stays right) -->
+            <div class="flex items-center">
+                @if (auth.currentUser(); as user) {
+                <!-- If logged in: Show the Dropdown (Avatar) -->
+                <app-user-dropdown />
+                } @else {
+                <!-- If logged out: Show the Sign In Button -->
+                <a routerLink="/login"
+                    class="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm transition-all active:scale-95">
+                    Sign In
+                </a>
+                }
+            </div>
+
+            <!-- 4. MOBILE OVERLAY (Only rendered on small screens when open) -->
+            <!-- 
+             This is completely separate from the desktop flow to prevent layout shifts.
+          -->
+            @if (isOpen()) {
+            <div
+                class="md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-xl z-50 animate-in fade-in slide-in-from-top-2">
+                <ul class="flex flex-col p-4 space-y-3 font-medium">
+                    <li><a routerLink="/home" (click)="close()"
+                        class="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">Home</a></li>
+                    <li><a routerLink="/dashboard" (click)="close()"
+                            class="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">Dashboard</a></li>
+                    <li><a routerLink="/chats" (click)="close()"
+                            class="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">Chats</a></li>
+                </ul>
+            </div>
+            }
+        </div>
+    </nav>
+
+
+    <!-- BREADCRUMBS -->
+    <nav class="bg-white border-b border-gray-100 px-1 md:px-4 py-2" aria-label="Breadcrumb">
+        <div class="max-w-[1920px] w-full mx-auto md:px-12 lg:px-16">
+            <ol class="flex items-center space-x-2 text-sm text-gray-500">
+                @for (crumb of bcService.breadcrumbs(); track crumb.url; let last = $last) {
+                <li class="flex items-center space-x-2">
+                    <svg class="size-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" />
+                    </svg>
+
+                    @if (last) {
+                    <span class="font-medium text-gray-900">{{ crumb.label }}</span>
+                    } @else {
+                    <a [routerLink]="crumb.url" class="hover:text-blue-600 transition-colors">
+                        {{ crumb.label }}
+                    </a>
+                    }
+                </li>
+                }
+            </ol>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 min-h-0 overflow-hidden max-w-[1920px] w-full mx-auto md:px-16 py-4 pb-12 flex flex-col">
+        <router-outlet></router-outlet>
+    </main>
+
+    <!-- NOTIFICATION TOASTS
+    <div class="fixed bottom-5 right-5 z-50 flex flex-col gap-3">
+        @for (toast of notify.notifications(); track toast.id) {
+        <div class="flex items-center w-full max-w-xs p-4 rounded-lg shadow-lg border animate-slide-in" [ngClass]="{
+               'bg-green-50 text-green-800 border-green-200': toast.type === 'success',
+               'bg-red-50 text-red-800 border-red-200': toast.type === 'error',
+               'bg-white text-gray-800 border-gray-200': toast.type === 'info'
+             }">
+            <div class="text-sm font-medium">{{ toast.message }}</div>
+            <button (click)="notify.remove(toast.id)"
+                class="ml-auto bg-transparent text-gray-400 hover:text-gray-900 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8">
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                </svg>
+            </button>
+        </div>
+        }
+    </div> -->
+
+</div>
+
+
+<!-- @if (notify.isLoading()) {
+                <div class="fixed top-0 left-0 w-full h-1 z-50 overflow-hidden bg-gray-100">
+                    <div class="h-full bg-blue-600 animate-progress origin-left"></div>
+                </div>
+                }
+                <style>
+                    @keyframes progress {
+                        0% {
+                            transform: scaleX(0);
+                        }
+
+                        50% {
+                            transform: scaleX(0.7);
+                        }
+
+                        100% {
+                            transform: scaleX(1);
+                        }
+                    }
+
+                    .animate-progress {
+                        animation: progress 2s infinite linear;
+                    }
+                </style> -->

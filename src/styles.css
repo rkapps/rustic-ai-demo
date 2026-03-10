@@ -1,1 +1,106 @@
 /* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+@plugin "flowbite/plugin";  
+@plugin "@tailwindcss/typography";
+@source "./**/*.{html,ts}";
+@source "../../libs/ngx-twang-ui-repo/dist/ngx-twang-ui";
+
+
+@theme {
+
+    --font-sans: 'Inter', ui-sans-serif, system-ui;
+
+    /* Primary - Sky Blue */
+    --color-primary: #0ea5e9;
+    --color-primary-50: #f0f9ff;
+    --color-primary-100: #e0f2fe;
+    --color-primary-200: #bae6fd;
+    --color-primary-300: #7dd3fc;
+    --color-primary-400: #38bdf8;
+    --color-primary-500: #0ea5e9;
+    --color-primary-600: #0284c7;
+    --color-primary-700: #0369a1;
+    --color-primary-800: #075985;
+    --color-primary-900: #0c4a6e;
+    --color-primary-950: #082f49;
+
+    /* --color-primary: #3b82f6; /* Tailwind Blue 500 */
+    /* --color-primary-50: #eff6ff;
+    --color-primary-100: #dbeafe;
+    --color-primary-200: #bfdbfe;
+    --color-primary-300: #93c5fd;
+    --color-primary-400: #60a5fa;
+    --color-primary-500: #3b82f6; 
+    --color-primary-600: #2563eb; 
+    --color-primary-700: #1d4ed8;
+    --color-primary-800: #1e40af;
+    --color-primary-900: #1e3a8a;
+    --color-primary-950: #172554;      */
+
+    /* Secondary - Cyan */
+    --color-secondary: #0891b2;
+    --color-secondary-50: #ecfeff;
+    --color-secondary-100: #cffafe;
+    --color-secondary-200: #a5f3fc;
+    --color-secondary-300: #67e8f9;
+    --color-secondary-400: #22d3ee;
+    --color-secondary-500: #06b6d4;
+    --color-secondary-600: #0891b2;
+    --color-secondary-700: #0e7490;
+    --color-secondary-800: #155e75;
+    --color-secondary-900: #164e63;
+    --color-secondary-950: #083344;
+
+    /* Accent - Amber */
+    --color-accent: #d97706;
+    --color-accent-50: #fffbeb;
+    --color-accent-100: #fef3c7;
+    --color-accent-200: #fde68a;
+    --color-accent-300: #fcd34d;
+    --color-accent-400: #fbbf24;
+    --color-accent-500: #f59e0b;
+    --color-accent-600: #d97706;
+    --color-accent-700: #b45309;
+    --color-accent-800: #92400e;
+    --color-accent-900: #78350f;
+    --color-accent-950: #451a03;
+}
+
+
+
+
+@keyframes progress-loading {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    50% {
+        transform: translateX(-30%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.animate-progress {
+    width: 100%;
+    animation: progress-loading 1.5s infinite ease-in-out;
+}
+
+main > *:not(router-outlet) {
+    display: block;
+    height: 100%;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
+  }
+
+  app-root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }

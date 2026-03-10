@@ -1,0 +1,47 @@
+<div class="flex flex-col h-full">
+
+    <div class="p-2 md:px-4 xl:px-8 grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-8">
+        <div class="text-2xl text-primary">
+            Configure a new Chat
+        </div>
+    </div>
+
+    <div class="bg-white p-2 lg:px-4 xl:px-8 md:py-8 md:mb-20 flex-1 overflow-y-auto">
+
+        <form (submit)="$event.preventDefault(); submit()">
+
+            <twang-input label="Title" [(value)]="chatForm.title" placeholder="Enter the title"></twang-input>
+
+            <div class="w-full flex flex-row gap-16 pt-6">
+
+                <div class="w-1/3 flex flex-row">
+                    <div class="flex w-full flex-col gap-2 items-stretch">
+                        <twang-dropdown label="Llms" (change)="onLlmProviderSelected($event)"
+                            [nodes]="llmNodes()"></twang-dropdown>
+                        <twang-dropdown label="Models" (change)="onLlmModelSelected($event)"
+                            [nodes]="modelNodes()"></twang-dropdown>
+
+                        <twang-checkbox type="checkbox" [(value)]="chatForm.stream" label="Stream" />
+                    </div>
+                </div>
+
+                <div class="w-2/3">
+                    <twang-textarea label="System Prompt" [(value)]="chatForm.system" [rows]="15"
+                        placeholder="Enter the System prompt or instructions..."></twang-textarea>
+                </div>
+            </div>
+
+            <div class="py-4 flex flex-row justify-center items-center">
+                <div class="w-3/4 justify-center">
+                    <!-- <twang-textarea label="Prompt" [field]="chatForm.prompt" [rows]="2"
+                        placeholder="Enter the starting prompt..."></twang-textarea> -->
+                    <div class="flex justify-end">
+                        <twang-button type="submit" [disabled]="!isValid()" label="Create Chat" />
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</div>
