@@ -17,7 +17,7 @@ export class AppComponent {
   notify = inject(NotificationService);
   public bcService = inject(BreadcrumbService);
 
-  protected readonly title = signal('Angular Starter');
+  protected readonly title = signal('RusticAI');
 
   constructor() {
   }

@@ -1,0 +1,43 @@
+<div class="h-full flex flex-col">
+
+
+    <div class="flex flex-row items-center gap-8">
+        <div class="text-2xl text-primary">
+            Chat with the Finance agent
+        </div>
+    </div>
+    <div class="flex-1 min-h-0 overflow-hidden py-4">
+
+        <div class="h-full flex flex-col">
+
+            <div class="flex-1 min-h-0 overflow-y-auto p-8 bg-white" #scrollContainer>
+
+                <twang-chat-messages 
+                    class="block"
+                    [messages]="messages()" 
+                    [autoScroll]="false" 
+                    [showMarkdown]="true">
+                </twang-chat-messages>
+            </div>
+
+            <div class="flex-none px-8 pt-8">
+                <div class="flex flex-row justify-center items-center">
+                    <form (submit)="$event.preventDefault(); submitPrompt()" class="w-2/3">
+                        <div class="flex flex-row justify-center items-center gap-4">
+
+                            <twang-textarea class="w-full" variant="secondary" label="Hit me!!!"
+                                [(value)]="chatRequestForm.prompt" [rows]="2" (enter)="handleEnter($event)"
+                                placeholder="Enter your prompt...">
+                            </twang-textarea>
+                            <twang-button type="submit" icon="ArrowUp"
+                                [disabled]="!chatRequestForm.prompt().trim() || isLoading()" [isLoading]="isLoading()">
+                            </twang-button>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

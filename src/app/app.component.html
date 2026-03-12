@@ -61,11 +61,11 @@
                                 [routerLinkActiveOptions]="{exact: false}"
                                 class="text-gray-500 transition-all duration-300 hover:text-accent-500">Home</a>
                         </li>
-                        <li><a routerLink="/dashboard" routerLinkActive="!text-accent-600 !font-bold scale-105"
-                                [routerLinkActiveOptions]="{exact: false}"
-                                class="text-gray-500 transition-all duration-300 hover:text-accent-500">Dashboard</a></li>
                         <li><a routerLink="/chats" routerLinkActive="!text-accent-600 !font-bold scale-105"
                                 class="text-gray-500 transition-all duration-300 hover:text-accent-500">Chats</a></li>
+                        <li><a routerLink="/markets" routerLinkActive="!text-accent-600 !font-bold scale-105"
+                            [routerLinkActiveOptions]="{exact: false}"
+                            class="text-gray-500 transition-all duration-300 hover:text-accent-500">Markets</a></li>
                     </ul>
                 </div>
             </div>
@@ -94,10 +94,13 @@
                 <ul class="flex flex-col p-4 space-y-3 font-medium">
                     <li><a routerLink="/home" (click)="close()"
                         class="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">Home</a></li>
-                    <li><a routerLink="/dashboard" (click)="close()"
-                            class="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">Dashboard</a></li>
+                    <!-- <li><a routerLink="/dashboard" (click)="close()"
+                            class="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">Dashboard</a></li> -->
                     <li><a routerLink="/chats" (click)="close()"
                             class="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">Chats</a></li>
+                    <li><a routerLink="/markets" routerLinkActive="!text-accent-600 !font-bold scale-105"
+                        [routerLinkActiveOptions]="{exact: false}"
+                        class="text-gray-500 transition-all duration-300 hover:text-accent-500">Markets</a></li>
                 </ul>
             </div>
             }
@@ -134,50 +137,4 @@
         <router-outlet></router-outlet>
     </main>
 
-    <!-- NOTIFICATION TOASTS
-    <div class="fixed bottom-5 right-5 z-50 flex flex-col gap-3">
-        @for (toast of notify.notifications(); track toast.id) {
-        <div class="flex items-center w-full max-w-xs p-4 rounded-lg shadow-lg border animate-slide-in" [ngClass]="{
-               'bg-green-50 text-green-800 border-green-200': toast.type === 'success',
-               'bg-red-50 text-red-800 border-red-200': toast.type === 'error',
-               'bg-white text-gray-800 border-gray-200': toast.type === 'info'
-             }">
-            <div class="text-sm font-medium">{{ toast.message }}</div>
-            <button (click)="notify.remove(toast.id)"
-                class="ml-auto bg-transparent text-gray-400 hover:text-gray-900 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8">
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                </svg>
-            </button>
-        </div>
-        }
-    </div> -->
-
 </div>
-
-
-<!-- @if (notify.isLoading()) {
-                <div class="fixed top-0 left-0 w-full h-1 z-50 overflow-hidden bg-gray-100">
-                    <div class="h-full bg-blue-600 animate-progress origin-left"></div>
-                </div>
-                }
-                <style>
-                    @keyframes progress {
-                        0% {
-                            transform: scaleX(0);
-                        }
-
-                        50% {
-                            transform: scaleX(0.7);
-                        }
-
-                        100% {
-                            transform: scaleX(1);
-                        }
-                    }
-
-                    .animate-progress {
-                        animation: progress 2s infinite linear;
-                    }
-                </style> -->

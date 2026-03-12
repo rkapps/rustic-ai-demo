@@ -1,6 +1,7 @@
 export const environment = {
     production: false,
-    apiUrl: 'http://localhost:8080',
+    chatUrl: 'http://localhost:8080',
+    finTrackerUrl: 'http://localhost:3002',
     firebase: {
         apiKey: "YOUR_API_KEY",
         appId: "YOUR_APP_ID",

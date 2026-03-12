@@ -12,7 +12,7 @@ import { environment } from "../../../environments/environment";
 export class DataService extends BaseHttpService {
 
     private sseClient = inject(SseClient);
-    baseUrl = environment.apiUrl;
+    baseUrl = environment.chatUrl;
 
 
     getChats() {

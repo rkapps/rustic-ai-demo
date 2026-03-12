@@ -129,6 +129,7 @@ export default class ChatDetailComponent {
       prompt: prompt,
       previous_response_id: previous_response_id
     }));
+    this.appendToMessages("user", prompt, "");
 
     if (this.chat().stream) {
       this.postStreamingChatCompletion();

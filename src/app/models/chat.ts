@@ -14,12 +14,6 @@ export interface Chat {
     // }
 }
 
-// export interface ChatMessage {
-//     // id: number;
-//     role: string;
-//     content: string;
-//     response_id: string;
-// }
 
 export interface ChatStreamingMessage {
     id: string,

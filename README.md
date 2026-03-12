@@ -1,6 +1,6 @@
-# Angular Starter
+# rustic-ai-demo
 
-A production-ready Angular starter template with a built-in chat feature, Firebase auth, and a pre-configured component library.
+A production-ready rustic-ai-demo template with a built-in chat feature, Firebase auth, and a pre-configured component library.
 
 ## Features
 
@@ -23,7 +23,7 @@ A production-ready Angular starter template with a built-in chat feature, Fireba
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-org/angular-starter.git my-new-app
+git clone https://github.com/your-org/rustic-ai-demo.git my-new-app
 cd my-new-app
 ```
 
