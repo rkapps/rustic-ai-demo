@@ -31,6 +31,7 @@ export interface ChatRequest {
 
 export interface ChatChunkReponse {
     content: string;
+    though: string;
     response_id: string;
     is_final : boolean;
 }

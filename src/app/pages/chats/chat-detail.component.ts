@@ -183,13 +183,13 @@ export default class ChatDetailComponent {
 
           if (data.is_final) {
             this.streaming = false;
-            let message = <ChatStreamingMessage>{
-              id: this.chat().id,
-              user_content: save_prompt,
-              assistant_content: this.streaming_content,
-              response_id: this.lastMessage()?.response_id ?? ""
-            }
-            this.dataService.saveChatStreamingMessage(message).subscribe();
+            // let message = <ChatStreamingMessage>{
+            //   id: this.chat().id,
+            //   user_content: save_prompt,
+            //   assistant_content: this.streaming_content,
+            //   response_id: this.lastMessage()?.response_id ?? ""
+            // }
+            // this.dataService.saveChatStreamingMessage(message).subscribe();
           }
 
         }

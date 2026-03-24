@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TwangChatMessagesComponent, ChatMessage } from 'ngx-twang-ui';
 import { TwangTextareaComponent, TwangButtonComponent } from 'ngx-twang-ui';
 import { FinService } from '../../core/services/fin.services';
-import { ChatRequest } from '../../models/chat';
+import { ChatChunkReponse, ChatRequest } from '../../models/chat';
 
 @Component({
   selector: 'app-analysis',
@@ -25,6 +25,8 @@ export default class AnalysisComponent implements OnInit {
   isLoading = signal<boolean>(false);
   lastResponseId = signal<string>('');
   count = 0;
+  streaming = false;
+  streaming_content = "";
 
 
 
@@ -76,12 +78,6 @@ export default class AnalysisComponent implements OnInit {
       return;
     }
 
-    this.postChatRequest(prompt);
-  }
-
-
-  private postChatRequest(prompt: string) {
-
     const previous_response_id = this.lastResponseId();
 
     this.count++;
@@ -93,6 +89,16 @@ export default class AnalysisComponent implements OnInit {
     }));
 
     this.appendToMessages("user", prompt, "");
+
+
+    // this.postChatRequest(prompt);
+    this.postChatRequestStreaming(prompt);
+
+  }
+
+
+  private postChatRequest(prompt: string) {
+
     this.finService.runStockAnalysis(this.request()).subscribe({
       next: (data) => {
         console.log(data);
@@ -107,6 +113,50 @@ export default class AnalysisComponent implements OnInit {
       }
     });
   }
+
+  private postChatRequestStreaming(prompt: string) {
+
+    this.streaming = true;
+    this.streaming_content = "";
+    let first_chunk = true;
+    let save_prompt = this.request().prompt;
+    console.log(this.request());
+    this.finService.runStockAnalysisStreaming<ChatChunkReponse>(this.request()).subscribe({
+      next: (data) => {
+        
+        // console.log(data);
+        if (first_chunk) {
+          this.appendToMessages("assistant", "", "");
+          this.request.update(p => ({
+            ...p,
+            prompt: ""
+          }));
+          first_chunk = false;
+        }
+        if (this.streaming) {
+
+          this.streaming_content += data.content;
+          this.messages.update(messages => messages.map((msg, index) =>
+            index === messages.length - 1
+              ? { ...msg, content: this.streaming_content, response_id: data.response_id } // Update last item
+              : msg                          // Keep others as-is
+          ));
+
+          if (data.is_final) {
+            this.streaming = false;
+            console.log(data);
+            this.lastResponseId.set(data.response_id);
+
+          }
+        }
+
+      },
+      error: (err) => {
+      }
+    });
+
+  }
+
 
   appendToMessages(role: 'user' | 'assistant' | 'system', content: string, response_id: string) {
 
