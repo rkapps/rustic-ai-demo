@@ -4,10 +4,15 @@ import { Injectable, signal } from "@angular/core";
 export class AppStateService {
     // UI State
     selectedDashboardTab = signal<'overview' | 'reports'>('overview');
-    searchQuery = signal('');
-    
+    searchChatQuery = signal('');
+    selectedChatId = signal<string>('');
+
     // Actions
-    updateSearch(val: string) {
-        this.searchQuery.set(val);
+    updateSearchChatQuery(val: string) {
+        this.searchChatQuery.set(val);
+    }
+
+    selectChat(id: string) {
+        this.selectedChatId.set(id);
     }
 }

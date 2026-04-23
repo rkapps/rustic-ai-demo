@@ -47,24 +47,20 @@
                 </button>
 
                 <a routerLink="/" class="flex items-center">
-                    <span class="text-2xl font-medium text-primary-800">{{title()}}</span>
+                    <span class="text-2xl font-medium text-primary-600">{{title()}}</span>
                 </a>
+            </div>
 
-                <!-- 2. DESKTOP NAV (Integrated into the row) -->
-                <!-- 
-               Hidden on mobile. 
-               On md: flex, static position, no width restriction.
-            -->
-                <div class="hidden md:flex md:items-center md:ml-8">
-                    <ul class="flex flex-row space-x-6 text-sm font-medium">
-                        <li><a routerLink="/home" routerLinkActive="!text-accent-600 !font-bold scale-105"
-                                [routerLinkActiveOptions]="{exact: false}"
-                                class="text-gray-500 transition-all duration-300 hover:text-accent-500">Home</a>
-                        </li>
-                        <li><a routerLink="/chats" routerLinkActive="!text-accent-600 !font-bold scale-105"
-                                class="text-gray-500 transition-all duration-300 hover:text-accent-500">Chats</a></li>
-                    </ul>
-                </div>
+            <!-- 2. CENTER NAV -->
+            <div class="hidden md:flex absolute left-1/2 -translate-x-1/2">
+                <ul class="flex flex-row space-x-6 text-sm font-medium">
+                    <li><a routerLink="/home" routerLinkActive="!text-accent-600 !font-bold scale-105"
+                            [routerLinkActiveOptions]="{exact: false}"
+                            class="text-gray-500 transition-all duration-300 hover:text-accent-500">Home</a>
+                    </li>
+                    <li><a routerLink="/chats" routerLinkActive="!text-accent-600 !font-bold scale-105"
+                            class="text-gray-500 transition-all duration-300 hover:text-accent-500">Chats</a></li>
+                </ul>
             </div>
 
             <!-- 3. RIGHT SECTION: User Dropdown (Always stays right) -->

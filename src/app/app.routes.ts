@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { firebaseAuthGuard } from './core/guards/firebase-auth.guard';
 
 export const routes: Routes = [
     { path: 'home', loadComponent: () => import('./pages/home/home.component'), data: { breadcrumb: 'Home' } },
@@ -13,6 +14,7 @@ export const routes: Routes = [
     // },
     {
         path: 'chats',
+        canActivate: [firebaseAuthGuard],
         loadChildren: () => import('./pages/chats/chat.routes').then(m => m.CHAT_ROUTES),
         data: { breadcrumb: 'Chats' }
     },

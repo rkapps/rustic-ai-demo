@@ -5,6 +5,7 @@ import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { errorInterceptor } from './core/interceptors.ts/error.interceptor';
 import { statusInterceptor } from './core/interceptors.ts/status.interceptor';
+import { authInterceptor } from './core/interceptors.ts/auth.interceptor';
 import { LucideAngularModule, Search, Mail, ArrowRight, Plus, MessageCirclePlus, MessageSquarePlus, MessagesSquare, ArrowUp, ArrowDown, ArrowLeft, LucideLoaderPinwheel, LoaderPinwheel } from 'lucide-angular';
 import { MarkdownModule, MarkedOptions, MARKED_OPTIONS, MarkedRenderer, SANITIZE } from 'ngx-markdown';
 
@@ -19,7 +20,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
 
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(withInterceptors([errorInterceptor, statusInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor, statusInterceptor])),
     provideBrowserGlobalErrorListeners(),
     provideFirebaseApp(() => initializeApp(environment.firebase)),
 
