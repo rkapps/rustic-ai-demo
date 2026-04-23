@@ -16,12 +16,6 @@ export const routes: Routes = [
         loadChildren: () => import('./pages/chats/chat.routes').then(m => m.CHAT_ROUTES),
         data: { breadcrumb: 'Chats' }
     },
-    {
-        path: 'markets',
-        loadChildren: () => import('./pages/markets/markets.routes').then(m => m.MARKETS_ROUTES),
-        data: { breadcrumb: 'Markets' }
-    },
-
     { path: 'settings', loadComponent: () => import('./pages/settings/settings.component'), canActivate: [authGuard] },
     { path: '', redirectTo: 'chats', pathMatch: 'full' }
 ];
