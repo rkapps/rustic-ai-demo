@@ -1,49 +1,36 @@
-<div class="h-full flex flex-col px-1">
+<div class="h-full flex flex-col">
 
-    <div class="flex flex-row items-center gap-8">
-        @if (chat()) {
-            <div class="text-2xl text-primary">
-                {{chat().title}}
-            </div>
-            <div>
-                {{chat().llm + ' / ' + chat().model}}
-            </div>
-        }
-
-    </div>
-
-    <div class="flex-1 min-h-0 overflow-hidden py-4">
-
-        <div class="h-full flex flex-col">
-
-            <div class="flex-1 min-h-0 overflow-y-auto p-8 bg-white" #scrollContainer>
-                <twang-chat-messages 
-                    class="block"
-                    [messages]="messages()" 
-                    [autoScroll]="false" 
-                    [showMarkdown]="true">
-                </twang-chat-messages>
-            </div>
-        
-            <div class="flex-none px-8 pt-8">
-                <div class="flex flex-row justify-center items-center">
-                    <form (submit)="$event.preventDefault(); submitPrompt()" class="w-2/3">
-                        <div class="flex flex-row justify-center items-center gap-4">
-        
-                            <twang-textarea class="w-full" variant="secondary" label="Hit me!!!"
-                                [(value)]="chatRequestForm.prompt" [rows]="2" (enter)="handleEnter($event)"
-                                placeholder="Enter your prompt...">
-                            </twang-textarea>
-                            <twang-button type="submit" icon="ArrowUp"
-                                [disabled]="!chatRequestForm.prompt().trim() || isLoading()" [isLoading]="isLoading()">
-                            </twang-button>
-        
-                        </div>
-                    </form>
-                </div>
-            </div>
-        
+    <!-- Header -->
+    <div class="flex-none flex items-center gap-3 px-5 py-3 border-b border-gray-200">
+        <div class="flex-1 min-w-0">
+            <div class="text-base font-semibold text-gray-900 truncate">{{ chat().title }}</div>
+            <div class="text-xs text-gray-400">{{ chat().llm }} / {{ chat().model }}</div>
         </div>
-
     </div>
+
+    <!-- Messages -->
+    <div class="flex-1 min-h-0 overflow-y-auto px-6 py-4" #scrollContainer>
+        <twang-chat-messages
+            class="block"
+            [messages]="messages()"
+            [autoScroll]="false"
+            [showMarkdown]="true">
+        </twang-chat-messages>
+    </div>
+
+    <!-- Input -->
+    <div class="flex-none px-6 py-4 border-t border-gray-200">
+        <form (submit)="$event.preventDefault(); submitPrompt()">
+            <div class="flex items-end gap-3">
+                <twang-textarea class="flex-1" variant="secondary" label=""
+                    [(value)]="chatRequestForm.prompt" [rows]="2" (enter)="handleEnter($event)"
+                    placeholder="Enter your prompt...">
+                </twang-textarea>
+                <twang-button type="submit" icon="ArrowUp"
+                    [disabled]="!chatRequestForm.prompt().trim() || isLoading()" [isLoading]="isLoading()">
+                </twang-button>
+            </div>
+        </form>
+    </div>
+
 </div>

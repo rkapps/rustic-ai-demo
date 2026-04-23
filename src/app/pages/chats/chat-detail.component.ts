@@ -66,24 +66,32 @@ export default class ChatDetailComponent {
 
     effect(() => {
       const messages = this.messages();
-
       setTimeout(() => {
         const container = this.scrollContainer();
-
         if (container?.nativeElement) {
           const el = container.nativeElement;
-          el.scrollTo({
-            top: el.scrollHeight,
-            behavior: 'smooth'
-          });
+          el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
         }
       }, 100);
     });
 
+    effect(() => {
+      const id = this.id();
+      if (id) {
+        this.messages.set([]);
+        this.isLoading.set(false);
+        this.lastResponseId.set('');
+        this.count = 0;
+        this.streaming = false;
+        this.streaming_content = '';
+        this.chatRequestForm.prompt.set('');
+        this.loadChatHistory();
+      }
+    });
+
   }
-  ngOnInit() {
-    this.loadChatHistory();
-  }
+
+  ngOnInit() {}
 
   loadChatHistory() {
     // console.log(this.id());

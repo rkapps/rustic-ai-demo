@@ -1,50 +1,42 @@
-<div class="flex flex-col h-full">
+<div class="flex h-full overflow-hidden gap-3 p-3">
 
-    <div class="p-2 md:px-4 xl:px-8 flex flex-col w-full justify-center items-center">
+    <!-- Left column: chat list -->
+    <div class="w-72 flex-none flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
 
-        <div class="w-3/4">
-            <div class="w-full flex flex-row items-center p-2 px-4 text-primary">
-                <div class="text-lg pr-1">
-                    Chats
-                </div>
-                <div class="text-xs flex-1">
-                    {{'(' + chats().length + ')'}}
-                </div>
-                <div class="justify-end">
-                    <twang-button icon="Plus" label="New Chat" (btnClick)="onCreateChatSelected()"
-                        size="sm"></twang-button>
+        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+            <span class="text-sm font-semibold text-gray-700">Chats ({{ chats().length }})</span>
+            <twang-button icon="Plus" label="New" size="sm" (btnClick)="onCreateChatSelected()"></twang-button>
+        </div>
+
+        <div class="px-3 py-2 border-b border-gray-200">
+            <twang-input type="search" placeholder="Search chats..." />
+        </div>
+
+        <div class="flex-1 overflow-y-auto">
+            @for (chat of chats(); track chat.id) {
+            <div class="px-3 py-2">
+                <div (click)="onChatSelected(chat)"
+                    class="p-3 rounded-lg cursor-pointer transition-all duration-150 border"
+                    [class]="selectedChatId() === chat.id
+                        ? 'bg-blue-50 border-blue-300 text-blue-900'
+                        : 'bg-white border-gray-200 hover:bg-gray-100 hover:border-gray-300'">
+                    <div class="font-medium text-sm truncate">{{ chat.title }}</div>
+                    <div class="text-xs text-gray-400 mt-0.5 truncate">{{ chat.llm }} / {{ chat.model }}</div>
                 </div>
             </div>
-            <twang-input type="search" />
+            }
         </div>
 
     </div>
 
-    <div class="bg-white p-2 lg:px-4 xl:px-8 md:py-8 md:mb-20 flex-1 overflow-y-auto">
-
-        @for (chat of chats(); track chat.id) {
-        <div class="pb-2">
-            <div class="p-4 gap-8 border bg-gray-50 border rounded-lg transition-all duration-200
-        border-slate-300 text-slate-900 placeholder:text-slate-400
-        hover:border-slate-400 hover:bg-gray-100
-        focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500
-        disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed
-        invalid:border-red-500 invalid:text-red-600" (click)="onChatSelected(chat)">
-
-                <div class="w-full flex flex-row gap-8 items-center">
-                    <div class="text-lg text-primary">
-                        {{chat.title   + ' (Streaming - ' + chat.stream + ')'}}
-                    </div>
-                    <div>
-                        {{chat.llm + ' / ' + chat.model}}
-                    </div>
-                </div>
-                <div class="px-16 pt-2 line-clamp-3 text-sm text-slate-600">
-                    <markdown [data]="chat.system"></markdown>
-                </div>
-
+    <!-- Right column: chat detail -->
+    <div class="flex-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        @if (selectedChatId()) {
+            <app-chat-detail [id]="selectedChatId()" />
+        } @else {
+            <div class="h-full flex items-center justify-center text-gray-400 text-sm">
+                Select a chat to start
             </div>
-        </div>
         }
     </div>
 
