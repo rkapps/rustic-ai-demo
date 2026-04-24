@@ -80,19 +80,14 @@
 
                 <!-- <button type="button" (click)="prevStep()" [disabled]="currentStep() === 1"
                     class="px-6 py-2 text-gray-500 font-medium disabled:opacity-0">Back</button> -->
-                <twang-button variant="primary" label="Next" (btnClick)="prevStep()"
+                <twang-button variant="primary" label="Back" (buttonClick)="prevStep()"
                     [disabled]="currentStep() === 1"></twang-button>
 
-                @if (currentStep() < 3) { <!-- <button type="button" (click)="nextStep()"
-                    class="px-8 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700">Next</button> -->
-                    <twang-button label="Next" (btnClick)="nextStep()"></twang-button>
-
-                    } @else {
-                    <!-- <button type="button" (click)="finish()"
-                        class="px-8 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700">Finish &
-                        Unlock</button> -->
-                    <twang-button label="Finish" (btnClick)="finish()" [isLoading]="isSaving()"></twang-button>
-                    }
+                @if (currentStep() < 3) {
+                    <twang-button label="Next" (buttonClick)="nextStep()"></twang-button>
+                } @else {
+                    <twang-button label="Finish" (buttonClick)="finish()" [loading]="isSaving()"></twang-button>
+                }
             </div>
         </form>
     </div> }

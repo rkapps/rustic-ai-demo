@@ -1,0 +1,69 @@
+<div class="twang-tree-dropdown-root relative w-full">
+  <button
+    type="button"
+    [class]="triggerClasses()"
+    [attr.id]="fieldId() ?? null"
+    [disabled]="disabled()"
+    [attr.aria-expanded]="open()"
+    aria-haspopup="listbox"
+    (click)="toggleOpen(); $event.stopPropagation()"
+  >
+    <span class="min-w-0 flex-1 truncate" [class.text-text-muted]="selected().length === 0">{{ summary() }}</span>
+    <span class="twang-dropdown-chevron" aria-hidden="true">
+      <span [class]="chevronClass()" [class.rotate-180]="open()">expand_more</span>
+    </span>
+  </button>
+
+  @if (open()) {
+    <div
+      class="twang-tree-dropdown-panel absolute left-0 right-0 z-50 mt-1 max-h-64 overflow-auto rounded-lg border border-border bg-white py-1 shadow-lg ring-1 ring-black/5"
+      role="listbox"
+      (mousedown)="onPanelMouseDown($event)"
+    >
+      @for (row of visibleRows(); track row.id) {
+        <div
+          class="flex min-h-7 items-center gap-1 pr-2"
+          [style.padding-left.px]="4 + row.depth * 8"
+          role="option"
+          [attr.aria-selected]="checkbox() ? null : isLeafSelected(row.id)"
+        >
+          @if (row.hasChildren) {
+            <button
+              type="button"
+              class="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-text-muted hover:bg-gray-100 hover:text-text"
+              [attr.aria-label]="isExpanded(row.id) ? 'Collapse' : 'Expand'"
+              (click)="toggleExpand(row.id, $event)"
+            >
+              <span
+                class="material-symbol text-[16px] transition-transform"
+                [class.rotate-90]="isExpanded(row.id)"
+                >chevron_right</span
+              >
+            </button>
+          } @else {
+            <span class="w-6 shrink-0"></span>
+          }
+
+          @if (checkbox()) {
+            <input
+              type="checkbox"
+              class="h-4 w-4 shrink-0 rounded border-border text-primary-600 focus:ring-primary-500"
+              [twangTreeTriState]="rowState(row.node)"
+              (click)="onCheckboxClick(row.node, $event)"
+            />
+          }
+
+          <button
+            type="button"
+            class="min-w-0 flex-1 truncate py-0.5 text-left text-sm text-text hover:text-primary-700"
+            (click)="onRowClick(row.node, $event)"
+          >
+            {{ row.label }}
+          </button>
+        </div>
+      } @empty {
+        <div class="px-3 py-2 text-sm text-text-muted">No options</div>
+      }
+    </div>
+  }
+</div>

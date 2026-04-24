@@ -1,4 +1,9 @@
-import { ChatMessage } from "ngx-twang-ui";
+export interface ChatMessage {
+    id: number;
+    role: 'user' | 'assistant' | 'system';
+    content: string;
+    response_id: string;
+}
 
 export interface Chat {
     id: string;

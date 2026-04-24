@@ -26,9 +26,6 @@
               }
             ],
             "preserveSymlinks": true,
-            "allowedCommonJsDependencies": [
-              "ngx-twang-ui"
-            ],
             "aot": true,
             "styles": [
               "src/styles.css"
@@ -60,6 +57,17 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "cloud": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.cloud.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -72,6 +80,9 @@
             },
             "development": {
               "buildTarget": "rustic-ai-demo:build:development"
+            },
+            "cloud": {
+              "buildTarget": "rustic-ai-demo:build:cloud"
             }
           },
           "defaultConfiguration": "development"

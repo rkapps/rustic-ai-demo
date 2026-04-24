@@ -2,7 +2,7 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { NotificationService } from '../../core/services/notification.service';
 import { Router } from '@angular/router';
-import { TwangButtonComponent} from "ngx-twang-ui";
+import { TwangButtonComponent } from "../../components/ui/twang-button/twang-button";
 import { UserStateService } from '../../core/services/user-state.service';
 
 

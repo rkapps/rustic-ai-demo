@@ -1,21 +1,17 @@
 import { Component } from "@angular/core";
 import { rxResource, toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { input, signal, effect, computed, linkedSignal, ElementRef, inject, viewChild } from "@angular/core";
-import { Chat, ChatChunkReponse, ChatRequest, ChatStreamingMessage } from "../../models/chat";
+import { Chat, ChatChunkReponse, ChatMessage, ChatRequest, ChatStreamingMessage } from "../../models/chat";
 import { DataService } from "../../core/services/data.services";
-import { NotificationService } from "../../core/services/notification.service";
-import { TwangChatMessagesComponent, ChatMessage, TwangTextareaComponent, TwangButtonComponent } from 'ngx-twang-ui';
-import { CommonModule } from '@angular/common';
+import { TwangButtonComponent } from '../../components/ui/twang-button/twang-button';
+import { MarkdownModule } from 'ngx-markdown';
 
 @Component({
   selector: 'app-chat-detail',
   standalone: true,
-  host: { class: 'block h-full' },  // 👈 add this
+  host: { class: 'block h-full' },
   imports: [
-    CommonModule,
-    TwangChatMessagesComponent,
-    TwangTextareaComponent,
-    TwangButtonComponent
+    MarkdownModule,
   ],
   templateUrl: './chat-detail.component.html'
 })
@@ -31,6 +27,10 @@ export default class ChatDetailComponent {
   messages = signal<ChatMessage[]>([]);
   isLoading = signal<boolean>(false);
   lastResponseId = signal<string>('');
+  listening = signal(false);
+  speechSupported = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
+
+  private recognition: any = null;
   lastMessage = computed(() => {
     const length = this.messages().length;
     return (length > 0) ? this.messages().at(length - 1) : null;
@@ -235,6 +235,29 @@ export default class ChatDetailComponent {
 
 
 
+
+  onMicrophoneClick() {
+    if (this.listening()) {
+      this.recognition?.stop();
+      return;
+    }
+
+    const SpeechRecognition = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
+    this.recognition = new SpeechRecognition();
+    this.recognition.continuous = false;
+    this.recognition.interimResults = false;
+    this.recognition.lang = 'en-US';
+
+    this.recognition.onstart = () => this.listening.set(true);
+    this.recognition.onend = () => this.listening.set(false);
+    this.recognition.onerror = () => this.listening.set(false);
+    this.recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      this.chatRequestForm.prompt.set(this.chatRequestForm.prompt() + transcript);
+    };
+
+    this.recognition.start();
+  }
 
   handleEnter(event: KeyboardEvent) {
     // Submit on Enter, but allow Shift+Enter for new line

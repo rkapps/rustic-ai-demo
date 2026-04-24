@@ -1,10 +1,9 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { Chat, ChatStreamingMessage } from "../../models/chat";
+import { Chat, ChatMessage, ChatStreamingMessage } from "../../models/chat";
 import { catchError, map, Observable, throwError } from "rxjs";
 import { LlmProvider } from "../../models/llm_provider";
 import { SseClient } from 'ngx-sse-client';
-import { ChatMessage } from "ngx-twang-ui";
 import { BaseHttpService } from "./base-http.services";
 import { environment } from "../../../environments/environment";
 
@@ -21,6 +20,10 @@ export class DataService extends BaseHttpService {
 
     getChatDetails(chat_id: string) {
         return this.get<Chat>(`/chats/${chat_id}`);
+    }
+
+    deleteChat(chat_id: string) {
+        return this.delete<void>(`/chats/${chat_id}`);
     }
 
     getLlmProviders() {

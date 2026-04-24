@@ -5,13 +5,17 @@
 
         <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200">
             <span class="text-sm font-semibold text-primary-600">Chats ({{ chats().length }})</span>
-            <twang-button icon="Plus" variant="default" size="sm" (btnClick)="onCreateChatSelected()"></twang-button>
+            <div class="flex items-center gap-1">
+                <twang-button icon="add" variant="default" size="sm" ariaLabel="New chat" (buttonClick)="onCreateChatSelected()"></twang-button>
+                <twang-button icon="refresh" variant="default" size="sm" ariaLabel="Refresh chats" (buttonClick)="onRefresh()"></twang-button>
+            </div>
         </div>
 
         <div class="px-3 py-2 border-b border-gray-200">
-            <twang-input type="search" placeholder="Search chats..."
+            <input type="search" placeholder="Search chats..."
+                class="w-full rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500"
                 [value]="appState.searchChatQuery()"
-                (valueChange)="appState.updateSearchChatQuery($event)" />
+                (input)="appState.updateSearchChatQuery($any($event.target).value)" />
         </div>
 
         <div class="flex-1 overflow-y-auto">
@@ -33,8 +37,12 @@
     <div class="flex-1 flex flex-col overflow-hidden">
 
         @if (selectedChat(); as chat) {
-            <div class="flex-none pb-3 text-center">
+            <div class="flex-none pb-3 flex items-center justify-center relative">
                 <div class="text-lg font-semibold text-primary-600">{{ chat.title }}</div>
+                <twang-button icon="delete" variant="default" size="sm" ariaLabel="Delete chat"
+                    class="absolute right-0"
+                    (buttonClick)="onDeleteChat(chat)">
+                </twang-button>
             </div>
         } @else {
             <div class="flex-1 flex items-center justify-center text-gray-400 text-sm">
