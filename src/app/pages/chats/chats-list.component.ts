@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { TwangButtonComponent } from '../../components/ui/twang-button/twang-button';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -46,6 +46,7 @@ export default class ChatsListComponent {
       );
   });
 
+  panelOpen = signal(true);
   selectedChatId = this.appState.selectedChatId;
 
   selectedChat = computed(() => this.chats().find(c => c.id === this.selectedChatId()) ?? null);

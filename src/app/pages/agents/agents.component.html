@@ -1,26 +1,37 @@
-<div class="flex h-full overflow-hidden gap-12 p-3">
+<div class="flex h-full overflow-hidden gap-3 p-3">
+
+    <!-- Collapsed panel toggle -->
+    @if (!panelOpen()) {
+        <button class="flex-none self-start mt-0.5 h-9 w-9 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 shadow-sm transition-colors"
+            (click)="panelOpen.set(true)" aria-label="Open agent list">
+            <span class="material-symbol text-[18px] leading-none">menu</span>
+        </button>
+    }
 
     <!-- Left column: agent list -->
-    <div class="w-72 flex-none flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+    @if (panelOpen()) {
+        <div class="w-72 flex-none flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
 
-        <div class="flex items-center px-4 py-4 border-b border-gray-200">
-            <span class="text-sm font-semibold text-primary-600">Agents</span>
-        </div>
-
-        <div class="flex-1 overflow-y-auto">
-            @for (agent of agents; track agent.id) {
-            <div (click)="onAgentSelected(agent)"
-                class="px-4 py-4 cursor-pointer transition-all duration-150 border-b border-gray-200"
-                [class]="selectedAgent()?.id === agent.id
-                    ? 'bg-blue-50 text-blue-900'
-                    : 'hover:bg-gray-50'">
-                <div class="font-medium text-sm">{{ agent.name }}</div>
-                <div class="text-xs text-gray-400 mt-0.5">{{ agent.description }}</div>
+            <div class="flex items-center justify-between px-4 py-4 border-b border-gray-200">
+                <span class="text-sm font-semibold text-primary-600">Agents</span>
+                <twang-button icon="chevron_left" variant="default" size="sm" ariaLabel="Collapse panel" (buttonClick)="panelOpen.set(false)"></twang-button>
             </div>
-            }
-        </div>
 
-    </div>
+            <div class="flex-1 overflow-y-auto">
+                @for (agent of agents; track agent.id) {
+                <div (click)="onAgentSelected(agent)"
+                    class="px-4 py-4 cursor-pointer transition-all duration-150 border-b border-gray-200"
+                    [class]="selectedAgent()?.id === agent.id
+                        ? 'bg-blue-50 text-blue-900'
+                        : 'hover:bg-gray-50'">
+                    <div class="font-medium text-sm">{{ agent.name }}</div>
+                    <div class="text-xs text-gray-400 mt-0.5">{{ agent.description }}</div>
+                </div>
+                }
+            </div>
+
+        </div>
+    }
 
     <!-- Right column -->
     <div class="flex-1 flex flex-col overflow-hidden">
@@ -34,7 +45,7 @@
                     <div class="text-base font-semibold text-gray-900">{{ agent.name }}</div>
                     <div class="flex items-center gap-2 shrink-0">
                         <span class="text-xs font-medium text-gray-500">LLM</span>
-                        <div class="w-56">
+                        <div class="w-72">
                             <twang-tree-dropdown
                                 placeholder="Select provider / model"
                                 [nodes]="treeNodes()"

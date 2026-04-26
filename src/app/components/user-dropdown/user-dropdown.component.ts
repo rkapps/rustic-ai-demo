@@ -1,11 +1,10 @@
 import { Component, signal, inject, HostListener, ElementRef } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
     selector: 'app-user-dropdown',
     standalone: true,
-    imports: [RouterLink],
+    imports: [],
     template: `
     <div class="relative">
       <!-- Dropdown Trigger (Avatar) -->
@@ -35,22 +34,8 @@ import { AuthService } from '../../core/services/auth.service';
             </p>
           </div>
 
-          <!-- Menu Links -->
-          <ul class="py-1">
-            <li>
-              <a routerLink="/profile" (click)="close()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors">
-                Your Profile
-              </a>
-            </li>
-            <li>
-              <a routerLink="/settings" (click)="close()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors">
-                Settings
-              </a>
-            </li>
-          </ul>
-
           <!-- Sign Out Action -->
-          <div class="border-t border-gray-50 pt-1">
+          <div class="pt-1">
             <button 
               (click)="handleLogout()" 
               class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium">

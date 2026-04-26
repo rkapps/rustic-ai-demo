@@ -30,6 +30,10 @@ export class AuthService {
         return await signInWithEmailAndPassword(this.auth, email, pass);
     }
 
+    async registerWithEmail(email: string, pass: string) {
+        return await createUserWithEmailAndPassword(this.auth, email, pass);
+    }
+
     async loginWithGoogle() {
         const provider = new GoogleAuthProvider();
         return await signInWithPopup(this.auth, provider);

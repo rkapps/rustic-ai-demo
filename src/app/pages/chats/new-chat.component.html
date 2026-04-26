@@ -59,8 +59,8 @@
                                 [value]="title()"
                                 (input)="title.set($any($event.target).value)" />
                         </div>
-                        <div class="w-56 shrink-0">
-                            <label class="block text-xs font-medium text-gray-500 mb-1">LLM / Model</label>
+                        <div class="w-72 shrink-0">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">LLM</label>
                             <twang-tree-dropdown
                                 placeholder="Select provider / model"
                                 [nodes]="treeNodes()"

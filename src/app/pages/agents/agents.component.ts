@@ -16,7 +16,7 @@ interface Agent {
 
 @Component({
   selector: 'app-agents',
-  imports: [TwangTreeDropdownComponent, MarkdownModule],
+  imports: [TwangButtonComponent, TwangTreeDropdownComponent, MarkdownModule],
   templateUrl: './agents.component.html',
 })
 export default class AgentsComponent {
@@ -29,6 +29,7 @@ export default class AgentsComponent {
     { id: 'ticker-analysis', name: 'Ticker Analysis', description: 'Analyse stock tickers with AI' }
   ];
 
+  panelOpen = signal(true);
   selectedAgent = signal<Agent | null>(this.agents[0]);
 
   llmProviders = toSignal(this.dataService.getLlmProviders(), { initialValue: [] });
