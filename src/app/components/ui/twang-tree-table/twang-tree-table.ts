@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges, computed, signal } from '@angular/core';
+import { LucideAngularModule } from 'lucide-angular';
 
 import type { TwangTableFooterCell, TwangTableSplitCell } from '../twang-table/twang-table';
 import type { TwangTreeTableColumn, TwangTreeTableNode } from './twang-tree-table.models';
@@ -16,7 +17,7 @@ export interface TwangTreeFlatRow<T> {
 @Component({
   selector: 'twang-tree-table',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './twang-tree-table.html',
   styleUrl: './twang-tree-table.css',
 })

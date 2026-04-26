@@ -4,7 +4,7 @@
     @if (!panelOpen()) {
         <button class="flex-none self-start mt-0.5 h-9 w-9 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 shadow-sm transition-colors"
             (click)="panelOpen.set(true)" aria-label="Open chat list">
-            <span class="material-symbol text-[18px] leading-none">menu</span>
+            <lucide-icon name="menu" [size]="18"></lucide-icon>
         </button>
     }
 
@@ -15,9 +15,9 @@
             <div class="flex items-center justify-between px-4 py-4 border-b border-gray-200">
                 <span class="text-sm font-semibold text-primary-600">Chats ({{ chats().length }})</span>
                 <div class="flex items-center gap-1">
-                    <twang-button icon="add" variant="default" size="sm" ariaLabel="New chat" (buttonClick)="onCreateChatSelected()"></twang-button>
-                    <twang-button icon="refresh" variant="default" size="sm" ariaLabel="Refresh chats" (buttonClick)="onRefresh()"></twang-button>
-                    <twang-button icon="chevron_left" variant="default" size="sm" ariaLabel="Collapse panel" (buttonClick)="panelOpen.set(false)"></twang-button>
+                    <twang-button icon="plus" variant="default" size="sm" ariaLabel="New chat" (buttonClick)="onCreateChatSelected()"></twang-button>
+                    <twang-button icon="refresh-cw" variant="default" size="sm" ariaLabel="Refresh chats" (buttonClick)="onRefresh()"></twang-button>
+                    <twang-button icon="chevron-left" variant="default" size="sm" ariaLabel="Collapse panel" (buttonClick)="panelOpen.set(false)"></twang-button>
                 </div>
             </div>
 
@@ -40,7 +40,7 @@
                 </div>
                 } @empty {
                     <div class="flex flex-col items-center justify-center gap-1 py-10 px-4 text-center">
-                        <p class="text-xs text-gray-400">No chats yet. Click <span class="material-symbol text-sm leading-none align-middle">add</span> to create one.</p>
+                        <p class="text-xs text-gray-400 flex items-center gap-1">No chats yet. Click <lucide-icon name="plus" [size]="14" class="inline"></lucide-icon> to create one.</p>
                     </div>
                 }
             </div>
@@ -53,9 +53,9 @@
 
         @if (!selectedChat()) {
             <div class="flex-1 flex flex-col items-center justify-center gap-2 text-center px-6">
-                <span class="material-symbol text-4xl text-gray-300">chat</span>
+                <lucide-icon name="message-square" [size]="48" class="text-gray-300"></lucide-icon>
                 <p class="text-sm font-medium text-gray-500">No chat selected</p>
-                <p class="text-xs text-gray-400">Use the <span class="inline-flex items-center gap-0.5 font-medium text-gray-500"><span class="material-symbol text-sm leading-none">add</span></span> button in the panel to create a new chat.</p>
+                <p class="text-xs text-gray-400 flex items-center gap-1">Use the <lucide-icon name="plus" [size]="14" class="text-gray-500"></lucide-icon> button in the panel to create a new chat.</p>
             </div>
         }
 
@@ -65,7 +65,7 @@
             @if (selectedChat(); as chat) {
                 <div class="flex-none px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                     <div class="text-base font-semibold text-gray-900">{{ chat.title }}</div>
-                    <twang-button icon="delete" variant="default" size="sm" ariaLabel="Delete chat"
+                    <twang-button icon="trash-2" variant="default" size="sm" ariaLabel="Delete chat"
                         (buttonClick)="onDeleteChat(chat)">
                     </twang-button>
                 </div>

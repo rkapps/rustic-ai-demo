@@ -1,6 +1,7 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { TwangButtonComponent } from '../../components/ui/twang-button/twang-button';
+import { LucideAngularModule } from 'lucide-angular';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, switchMap } from 'rxjs';
 import { DataService } from '../../core/services/data.services';
@@ -9,7 +10,7 @@ import { Chat } from '../../models/chat';
 
 @Component({
   selector: 'app-chats-list',
-  imports: [TwangButtonComponent, RouterOutlet],
+  imports: [TwangButtonComponent, RouterOutlet, LucideAngularModule],
   templateUrl: './chats-list.component.html',
 })
 export default class ChatsListComponent {

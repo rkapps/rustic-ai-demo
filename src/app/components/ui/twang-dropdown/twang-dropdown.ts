@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { LucideAngularModule } from 'lucide-angular';
 import {
   Component,
   ElementRef,
@@ -25,7 +26,7 @@ export type TwangDropdownSize = 'xs' | 'sm' | 'md' | 'lg';
 @Component({
   selector: 'twang-dropdown',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './twang-dropdown.html',
   styleUrl: './twang-dropdown.css',
 })

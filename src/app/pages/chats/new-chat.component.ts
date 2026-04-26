@@ -8,31 +8,32 @@ import { ChatTemplate } from "../../models/chat-template";
 import { TwangButtonComponent } from "../../components/ui/twang-button/twang-button";
 import { TwangTreeDropdownComponent } from "../../components/ui/twang-tree-dropdown/twang-tree-dropdown";
 import { TwangTreeDropdownNode } from "../../components/ui/twang-tree-dropdown/twang-tree-dropdown.models";
+import { LucideAngularModule } from "lucide-angular";
 
 const ICON_MAP: Record<string, string> = {
-    'robot': 'smart_toy',
-    'graduation-cap': 'school',
+    'robot': 'bot',
+    'graduation-cap': 'graduation-cap',
     'code': 'code',
     'code-2': 'code',
-    'chart-bar': 'bar_chart',
-    'book': 'menu_book',
-    'briefcase': 'work',
-    'brain': 'psychology',
-    'globe': 'language',
-    'chat': 'chat',
+    'chart-bar': 'chart-bar',
+    'book': 'book-open',
+    'briefcase': 'briefcase',
+    'brain': 'brain',
+    'globe': 'globe',
+    'chat': 'message-square',
     'search': 'search',
-    'flask': 'science',
-    'pencil': 'edit',
-    'calculator': 'calculate',
-    'music': 'music_note',
+    'flask': 'flask-conical',
+    'pencil': 'pencil',
+    'calculator': 'calculator',
+    'music': 'music',
     'image': 'image',
-    'file': 'description',
-    'translate': 'translate',
+    'file': 'file-text',
+    'translate': 'languages',
 };
 
 @Component({
     selector: 'app-new-chat',
-    imports: [TwangButtonComponent, TwangTreeDropdownComponent],
+    imports: [TwangButtonComponent, TwangTreeDropdownComponent, LucideAngularModule],
     templateUrl: './new-chat.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -126,7 +127,7 @@ export default class NewChatComponent {
     }
 
     getIcon(iconName: string): string {
-        return ICON_MAP[iconName] ?? 'chat_bubble';
+        return ICON_MAP[iconName] ?? 'message-circle';
     }
 
     submit() {

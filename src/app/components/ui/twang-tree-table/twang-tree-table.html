@@ -77,10 +77,12 @@
                               class="twang-tree-indent shrink-0"
                               [style.width.px]="flat.node.depth * 16"
                             ></span>
-                            <span
-                              class="material-symbol twang-tree-chevron shrink-0 text-[16px] leading-none text-text-muted"
+                            <lucide-icon
+                              name="chevron-right"
+                              [size]="14"
+                              class="twang-tree-chevron shrink-0 text-text-muted transition-transform"
                               [class.twang-tree-chevron--open]="isExpanded(flat.node.id)"
-                            >chevron_right</span>
+                            ></lucide-icon>
                             <span class="min-w-0 truncate">{{ flat.node.label }}</span>
                           </button>
                         } @else {

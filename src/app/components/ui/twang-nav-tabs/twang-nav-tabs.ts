@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { LucideAngularModule } from 'lucide-angular';
 import { Component, computed, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
@@ -16,7 +17,7 @@ import type {
 @Component({
   selector: 'twang-nav-tabs',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive, LucideAngularModule],
   templateUrl: './twang-nav-tabs.html',
   host: { class: 'block w-full min-w-0' },
 })
@@ -107,19 +108,18 @@ export class TwangNavTabsComponent {
     return 'border-primary-600 !font-bold !text-primary-600';
   });
 
-  protected readonly iconClasses = computed(() => {
+  protected readonly iconSizePx = computed(() => {
     const s = this.size();
     const v = this.variant();
-    const base = 'material-symbol leading-none ';
     if (v === 'underline') {
-      if (s === 'xs') return base + 'text-lg align-middle';
-      if (s === 'sm') return base + 'text-xl align-middle';
-      if (s === 'lg') return base + 'text-3xl align-middle';
-      return base + 'text-2xl align-middle';
+      if (s === 'xs') return 16;
+      if (s === 'sm') return 18;
+      if (s === 'lg') return 26;
+      return 22;
     }
-    if (s === 'xs' || s === 'sm') return base + 'text-base';
-    if (s === 'lg') return base + 'text-2xl';
-    return base + 'text-lg';
+    if (s === 'xs' || s === 'sm') return 16;
+    if (s === 'lg') return 22;
+    return 18;
   });
 
   protected trackKey(item: TwangNavTabItem, index: number): string {

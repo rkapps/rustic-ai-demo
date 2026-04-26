@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { LucideAngularModule } from 'lucide-angular';
 import {
   Component,
   Directive,
@@ -66,7 +67,7 @@ function findNodeById(nodes: TwangTreeDropdownNode[], id: string): TwangTreeDrop
 @Component({
   selector: 'twang-tree-dropdown',
   standalone: true,
-  imports: [CommonModule, TwangTreeTriStateCheckboxDirective],
+  imports: [CommonModule, LucideAngularModule, TwangTreeTriStateCheckboxDirective],
   templateUrl: './twang-tree-dropdown.html',
   styleUrl: './twang-tree-dropdown.css',
 })

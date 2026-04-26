@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { DataService } from '../../core/services/data.services';
 import { AppStateService } from '../../core/services/app-state.service';
 import { TwangButtonComponent } from '../../components/ui/twang-button/twang-button';
+import { LucideAngularModule } from 'lucide-angular';
 import { TwangTreeDropdownComponent } from '../../components/ui/twang-tree-dropdown/twang-tree-dropdown';
 import { TwangTreeDropdownNode } from '../../components/ui/twang-tree-dropdown/twang-tree-dropdown.models';
 import { MarkdownModule } from 'ngx-markdown';
@@ -16,7 +17,7 @@ interface Agent {
 
 @Component({
   selector: 'app-agents',
-  imports: [TwangButtonComponent, TwangTreeDropdownComponent, MarkdownModule],
+  imports: [TwangButtonComponent, TwangTreeDropdownComponent, MarkdownModule, LucideAngularModule],
   templateUrl: './agents.component.html',
 })
 export default class AgentsComponent {

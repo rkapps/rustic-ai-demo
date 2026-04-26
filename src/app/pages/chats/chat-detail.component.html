@@ -36,7 +36,7 @@
                     [disabled]="isLoading() || !chatRequestForm.prompt().trim()"
                     (click)="submitPrompt()"
                     aria-label="Send message">
-                    <span class="material-symbol text-[16px] leading-none">send</span>
+                    <lucide-icon name="send" [size]="16"></lucide-icon>
                 </button>
                 @if (speechSupported) {
                 <button
@@ -48,7 +48,11 @@
                     [disabled]="isLoading()"
                     [attr.aria-label]="listening() ? 'Stop voice input' : 'Start voice input'"
                     (click)="onMicrophoneClick()">
-                    <span class="material-symbol text-[16px] leading-none">{{ listening() ? 'mic_off' : 'mic' }}</span>
+                    @if (listening()) {
+                        <lucide-icon name="mic-off" [size]="16"></lucide-icon>
+                    } @else {
+                        <lucide-icon name="mic" [size]="16"></lucide-icon>
+                    }
                 </button>
                 }
             </div>

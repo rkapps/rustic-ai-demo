@@ -12,9 +12,9 @@
   (click)="onClick($event)"
 >
   @if (loading()) {
-    <span [class]="iconSymbolClass()" aria-hidden="true">progress_activity</span>
+    <lucide-icon name="loader-circle" [size]="iconSizePx()" class="animate-spin shrink-0" aria-hidden="true"></lucide-icon>
   } @else if (icon()) {
-    <span [class]="iconSymbolClass()" aria-hidden="true">{{ icon() }}</span>
+    <lucide-icon [name]="icon()" [size]="iconSizePx()" class="shrink-0" aria-hidden="true"></lucide-icon>
   }
   @if (label()) {
     <span>{{ label() }}</span>

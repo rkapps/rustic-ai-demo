@@ -10,7 +10,7 @@
   >
     <span class="min-w-0 flex-1 truncate" [class.text-text-muted]="!value()">{{ currentLabel() }}</span>
     <span class="twang-dropdown-chevron" aria-hidden="true">
-      <span [class]="chevronClass()" [class.rotate-180]="open()">expand_more</span>
+      <lucide-icon name="chevron-down" [size]="14" class="text-text-muted transition-transform duration-200" [class.rotate-180]="open()"></lucide-icon>
     </span>
   </button>
 

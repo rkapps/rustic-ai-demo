@@ -3,8 +3,8 @@ import { rxResource, toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { input, signal, effect, computed, linkedSignal, ElementRef, inject, viewChild } from "@angular/core";
 import { Chat, ChatChunkReponse, ChatMessage, ChatRequest, ChatStreamingMessage } from "../../models/chat";
 import { DataService } from "../../core/services/data.services";
-import { TwangButtonComponent } from '../../components/ui/twang-button/twang-button';
 import { MarkdownModule } from 'ngx-markdown';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-chat-detail',
@@ -12,6 +12,7 @@ import { MarkdownModule } from 'ngx-markdown';
   host: { class: 'block h-full' },
   imports: [
     MarkdownModule,
+    LucideAngularModule,
   ],
   templateUrl: './chat-detail.component.html'
 })

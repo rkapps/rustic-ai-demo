@@ -52,13 +52,13 @@
                         [class.justify-start]="col.align !== 'right'"
                         (click)="toggleSort(col)"
                       >
-                        <span
-                          class="material-symbol inline-flex w-4 shrink-0 justify-center text-sm"
+                        <lucide-icon
+                          [name]="sortIndicator(col)"
+                          [size]="14"
+                          class="shrink-0 text-text-muted"
                           [class.order-first]="col.align === 'right'"
                           aria-hidden="true"
-                        >
-                          {{ sortIndicator(col) }}
-                        </span>
+                        ></lucide-icon>
                         <span class="min-w-0 truncate">{{ col.header }}</span>
                       </button>
                     </div>

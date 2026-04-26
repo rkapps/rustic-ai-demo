@@ -10,7 +10,7 @@
   >
     <span class="min-w-0 flex-1 truncate" [class.text-text-muted]="selected().length === 0">{{ summary() }}</span>
     <span class="twang-dropdown-chevron" aria-hidden="true">
-      <span [class]="chevronClass()" [class.rotate-180]="open()">expand_more</span>
+      <lucide-icon name="chevron-down" [size]="14" class="text-text-muted transition-transform duration-200" [class.rotate-180]="open()"></lucide-icon>
     </span>
   </button>
 
@@ -34,11 +34,7 @@
               [attr.aria-label]="isExpanded(row.id) ? 'Collapse' : 'Expand'"
               (click)="toggleExpand(row.id, $event)"
             >
-              <span
-                class="material-symbol text-[16px] transition-transform"
-                [class.rotate-90]="isExpanded(row.id)"
-                >chevron_right</span
-              >
+              <lucide-icon name="chevron-right" [size]="14" class="transition-transform" [class.rotate-90]="isExpanded(row.id)"></lucide-icon>
             </button>
           } @else {
             <span class="w-6 shrink-0"></span>

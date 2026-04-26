@@ -4,7 +4,7 @@
     @if (!panelOpen()) {
         <button class="flex-none self-start mt-0.5 h-9 w-9 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 shadow-sm transition-colors"
             (click)="panelOpen.set(true)" aria-label="Open agent list">
-            <span class="material-symbol text-[18px] leading-none">menu</span>
+            <lucide-icon name="menu" [size]="18"></lucide-icon>
         </button>
     }
 
@@ -14,7 +14,7 @@
 
             <div class="flex items-center justify-between px-4 py-4 border-b border-gray-200">
                 <span class="text-sm font-semibold text-primary-600">Agents</span>
-                <twang-button icon="chevron_left" variant="default" size="sm" ariaLabel="Collapse panel" (buttonClick)="panelOpen.set(false)"></twang-button>
+                <twang-button icon="chevron-left" variant="default" size="sm" ariaLabel="Collapse panel" (buttonClick)="panelOpen.set(false)"></twang-button>
             </div>
 
             <div class="flex-1 overflow-y-auto">
@@ -109,7 +109,7 @@
                                 [disabled]="isLoading() || !isValid()"
                                 (click)="submit()"
                                 aria-label="Run agent">
-                                <span class="material-symbol text-[16px] leading-none">send</span>
+                                <lucide-icon name="send" [size]="16"></lucide-icon>
                             </button>
                         </div>
                     </div>

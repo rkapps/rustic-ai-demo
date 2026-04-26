@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges, computed, signal } from '@angular/core';
+import { LucideAngularModule } from 'lucide-angular';
 
 export type TwangTableSortDir = 'asc' | 'desc';
 export type TwangTableAlign = 'left' | 'right';
@@ -68,7 +69,7 @@ export interface TwangTableFooterCell {
 @Component({
   selector: 'twang-table',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './twang-table.html',
   styleUrl: './twang-table.css',
 })
@@ -187,8 +188,8 @@ export class TwangTableComponent<T extends object> implements OnChanges {
 
   protected sortIndicator(col: TwangTableColumn<T>): string {
     if (!col.sortable) return '';
-    if (this.sortKey() !== col.id) return 'unfold_more';
-    return this.sortDir() === 'asc' ? 'arrow_upward' : 'arrow_downward';
+    if (this.sortKey() !== col.id) return 'arrow-up-down';
+    return this.sortDir() === 'asc' ? 'arrow-up' : 'arrow-down';
   }
 
   protected getCellClass(col: TwangTableColumn<T>, row: T): string {

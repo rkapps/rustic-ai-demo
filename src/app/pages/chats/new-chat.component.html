@@ -16,7 +16,7 @@
                     <div (click)="onTemplateSelected(template)"
                         [class]="'mx-2 mb-0.5 px-3 py-1.5 rounded-lg cursor-pointer transition-all duration-150 flex items-start gap-3 ' + (selectedTemplate()?.id === template.id ? 'bg-primary-50 text-primary-900' : 'hover:bg-gray-50')">
                         <span [class]="'shrink-0 flex items-center justify-center w-8 h-8 rounded-lg border ' + (selectedTemplate()?.id === template.id ? 'border-primary-200 bg-primary-50 text-primary-600' : 'border-border bg-white text-gray-400')">
-                            <span class="material-symbol text-[18px] leading-none">{{ getIcon(template.icon) }}</span>
+                            <lucide-icon [name]="getIcon(template.icon)" [size]="18"></lucide-icon>
                         </span>
                         <div class="min-w-0">
                             <div class="text-sm font-medium truncate">{{ template.label }}</div>
@@ -39,7 +39,7 @@
                 <!-- Header -->
                 <div class="flex-none px-6 py-4 border-b border-gray-200 flex items-center gap-3">
                     <span class="flex items-center justify-center w-10 h-10 rounded-xl border border-primary-200 bg-primary-50 text-primary-600 shrink-0">
-                        <span class="material-symbol text-[22px] leading-none">{{ getIcon(template.icon) }}</span>
+                        <lucide-icon [name]="getIcon(template.icon)" [size]="22"></lucide-icon>
                     </span>
                     <div>
                         <div class="text-base font-semibold text-gray-900">{{ template.label }}</div>

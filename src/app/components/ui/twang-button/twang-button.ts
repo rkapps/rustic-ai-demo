@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, input, output } from '@angular/core';
+import { LucideAngularModule } from 'lucide-angular';
 
 export type TwangButtonVariant =
   | 'primary'
@@ -18,7 +19,7 @@ export type TwangButtonSize = 'xs' | 'sm' | 'md' | 'lg';
 @Component({
   selector: 'twang-button',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './twang-button.html',
 })
 export class TwangButtonComponent {
@@ -102,16 +103,9 @@ export class TwangButtonComponent {
       .join(' ');
   });
 
-  /** Icon / spinner size follows button size (without duplicating padding classes on the symbol). */
-  protected readonly iconSymbolClass = computed(() => {
-    const m: Record<TwangButtonSize, string> = {
-      xs: 'material-symbol text-sm leading-none',
-      sm: 'material-symbol text-base leading-none',
-      md: 'material-symbol text-xl leading-none',
-      lg: 'material-symbol text-2xl leading-none',
-    };
-    const spin = this.loading() ? ' animate-spin' : '';
-    return m[this.size()] + spin;
+  protected readonly iconSizePx = computed(() => {
+    const m: Record<TwangButtonSize, number> = { xs: 14, sm: 15, md: 18, lg: 22 };
+    return m[this.size()];
   });
 
   protected onClick(ev: MouseEvent): void {
