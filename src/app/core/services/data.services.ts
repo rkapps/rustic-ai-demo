@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { Chat, ChatChunkReponse, ChatMessage, ChatStreamingMessage } from "../../models/chat";
+import { ChatTemplate } from "../../models/chat-template";
 import { catchError, map, Observable, throwError } from "rxjs";
 import { LlmProvider } from "../../models/llm_provider";
 import { SseClient } from 'ngx-sse-client';
@@ -28,6 +29,10 @@ export class DataService extends BaseHttpService {
 
     getLlmProviders() {
         return this.get<LlmProvider[]>("/llm/providers");
+    }
+
+    getTemplates() {
+        return this.get<{ templates: ChatTemplate[] }>('/templates');
     }
 
     createChat(data: any): Observable<Chat> {

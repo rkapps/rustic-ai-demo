@@ -3,7 +3,7 @@
     <!-- Left column: agent list -->
     <div class="w-72 flex-none flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
 
-        <div class="flex items-center px-4 py-3 border-b border-gray-200">
+        <div class="flex items-center px-4 py-4 border-b border-gray-200">
             <span class="text-sm font-semibold text-primary-600">Agents</span>
         </div>
 
@@ -27,25 +27,24 @@
 
         @if (selectedAgent(); as agent) {
 
-            <div class="flex-none pb-3 flex items-center justify-center">
-                <div class="text-lg font-semibold text-primary-600">{{ agent.name }}</div>
-            </div>
-
             <div class="flex-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col">
 
-                <!-- Config row -->
-                <div class="flex-none flex items-center justify-end gap-3 px-6 py-4 border-b border-gray-200">
-                    <span class="text-xs font-medium text-gray-500">LLM</span>
-                    <div class="w-56">
-                        <twang-tree-dropdown
-                            placeholder="Select provider / model"
-                            [nodes]="treeNodes()"
-                            [multiselect]="false"
-                            [checkbox]="false"
-                            size="sm"
-                            [selected]="selectedLeaf()"
-                            (selectedChange)="selectedLeaf.set($event)">
-                        </twang-tree-dropdown>
+                <!-- Header -->
+                <div class="flex-none px-6 py-4 border-b border-gray-200 flex items-center justify-between gap-4">
+                    <div class="text-base font-semibold text-gray-900">{{ agent.name }}</div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span class="text-xs font-medium text-gray-500">LLM</span>
+                        <div class="w-56">
+                            <twang-tree-dropdown
+                                placeholder="Select provider / model"
+                                [nodes]="treeNodes()"
+                                [multiselect]="false"
+                                [checkbox]="false"
+                                size="sm"
+                                [selected]="selectedLeaf()"
+                                (selectedChange)="selectedLeaf.set($event)">
+                            </twang-tree-dropdown>
+                        </div>
                     </div>
                 </div>
 
