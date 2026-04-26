@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/rustic-ai-demo/browser",
+    "public": "dist/rustic-ai/browser",
     "ignore": [
       "firebase.json",
       "**/.*",

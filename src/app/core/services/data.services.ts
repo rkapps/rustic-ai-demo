@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { Chat, ChatMessage, ChatStreamingMessage } from "../../models/chat";
+import { Chat, ChatChunkReponse, ChatMessage, ChatStreamingMessage } from "../../models/chat";
 import { catchError, map, Observable, throwError } from "rxjs";
 import { LlmProvider } from "../../models/llm_provider";
 import { SseClient } from 'ngx-sse-client';
@@ -68,6 +68,24 @@ export class DataService extends BaseHttpService {
                         return JSON.parse(event.data) as T;
                     } catch (e) {
                         console.error('JSON parse error:', e, event.data);
+                        throw new Error(`Invalid JSON: ${event.data}`);
+                    }
+                } else {
+                    throw new Error('Unexpected event type');
+                }
+            }),
+            catchError(this.handleError)
+        );
+    }
+
+    analyseTickersStreaming(data: { llm: string; model: string; prompt: string; prev_response_id?: string }): Observable<ChatChunkReponse> {
+        const url = environment.financeUrl + '/tickers/analyse_streaming';
+        return this.sseClient.stream(url, { keepAlive: false }, { body: data }, 'POST').pipe(
+            map(event => {
+                if (event instanceof MessageEvent) {
+                    try {
+                        return JSON.parse(event.data) as ChatChunkReponse;
+                    } catch (e) {
                         throw new Error(`Invalid JSON: ${event.data}`);
                     }
                 } else {

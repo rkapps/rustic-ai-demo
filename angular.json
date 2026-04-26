@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "rustic-ai-demo": {
+    "rustic-ai": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -76,13 +76,13 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "rustic-ai-demo:build:production"
+              "buildTarget": "rustic-ai:build:production"
             },
             "development": {
-              "buildTarget": "rustic-ai-demo:build:development"
+              "buildTarget": "rustic-ai:build:development"
             },
             "cloud": {
-              "buildTarget": "rustic-ai-demo:build:cloud"
+              "buildTarget": "rustic-ai:build:cloud"
             }
           },
           "defaultConfiguration": "development"

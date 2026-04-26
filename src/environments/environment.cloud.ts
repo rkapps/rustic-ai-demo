@@ -1,14 +1,14 @@
 export const environment = {
     production: false,
-    chatUrl: 'https://rustic-ai-api-618267346796.us-central1.run.app',
-    finTrackerUrl: '',
+    chatUrl: 'https://rustic-ai-api-165794327371.us-central1.run.app',
+    financeUrl: 'https://fin-tracker-api-155146102194.us-central1.run.app',
     firebase: {
-        apiKey: "AIzaSyDXBmH3Af9g22hR7Lmv4-XErP0LdGIwZzs",
-        authDomain: "rustic-ai-backend.firebaseapp.com",
-        projectId: "rustic-ai-backend",
-        storageBucket: "rustic-ai-backend.firebasestorage.app",
-        messagingSenderId: "618267346796",
-        appId: "1:618267346796:web:316c86d61b85a22e249549",
-        measurementId: "G-6FQDPMCR7S"
+        apiKey: "AIzaSyAf74b-KeXBi0qMK-9xTRQFU3kCDYRGzaU",
+        authDomain: "rustic-ai-rkapps.firebaseapp.com",
+        projectId: "rustic-ai-rkapps",
+        storageBucket: "rustic-ai-rkapps.firebasestorage.app",
+        messagingSenderId: "165794327371",
+        appId: "1:165794327371:web:b0f96d37eedd92aa5b56ce",
+        measurementId: "G-QBXL91BG7P"
     }
 };

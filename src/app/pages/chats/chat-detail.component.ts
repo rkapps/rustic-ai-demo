@@ -154,11 +154,8 @@ export default class ChatDetailComponent {
       next: (data) => {
         console.log(data);
         this.appendToMessages(data.role, data.content, data.response_id);
-        // this.previous_response_id = data.response_id;
-        this.request.update(p => ({
-          ...p,
-          prompt: "",
-        }));
+        this.request.update(p => ({ ...p, prompt: "" }));
+        this.chatRequestForm.prompt.set('');
       }
     });
   }
@@ -191,6 +188,7 @@ export default class ChatDetailComponent {
 
           if (data.is_final) {
             this.streaming = false;
+            this.chatRequestForm.prompt.set('');
             // let message = <ChatStreamingMessage>{
             //   id: this.chat().id,
             //   user_content: save_prompt,

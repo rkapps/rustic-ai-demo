@@ -18,6 +18,12 @@ export const routes: Routes = [
         loadChildren: () => import('./pages/chats/chat.routes').then(m => m.CHAT_ROUTES),
         data: { breadcrumb: 'Chats' }
     },
+    {
+        path: 'agents',
+        canActivate: [firebaseAuthGuard],
+        loadComponent: () => import('./pages/agents/agents.component'),
+        data: { breadcrumb: 'Agents' }
+    },
     { path: 'settings', loadComponent: () => import('./pages/settings/settings.component'), canActivate: [authGuard] },
     { path: '', redirectTo: 'chats', pathMatch: 'full' }
 ];

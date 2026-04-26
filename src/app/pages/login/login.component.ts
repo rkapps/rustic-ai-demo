@@ -86,7 +86,7 @@ export default class LoginComponent {
       // Logic would call your Firebase AuthService
       await this.auth.loginWithEmail(this.email, this.password);
       this.notify.showSuccess('Welcome back!');
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/chats']);
     } catch (error: any) {
       this.notify.showError(error.message || 'Login failed');
     } finally {
@@ -97,7 +97,7 @@ export default class LoginComponent {
   async signInWithGoogle() {
     try {
       await this.auth.loginWithGoogle();
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/chats']);
     } catch (error) {
       this.notify.showError('Social login failed');
     }
