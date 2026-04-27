@@ -1,9 +1,9 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { TwangButtonComponent } from '../../components/ui/twang-button/twang-button';
 import { LucideAngularModule } from 'lucide-angular';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, switchMap } from 'rxjs';
+import { BehaviorSubject, filter, map, startWith, switchMap } from 'rxjs';
 import { DataService } from '../../core/services/data.services';
 import { AppStateService } from '../../core/services/app-state.service';
 import { Chat } from '../../models/chat';
@@ -48,15 +48,27 @@ export default class ChatsListComponent {
   });
 
   panelOpen = signal(true);
+  showDetail = signal(false);
   selectedChatId = this.appState.selectedChatId;
 
   selectedChat = computed(() => this.chats().find(c => c.id === this.selectedChatId()) ?? null);
 
+  // Re-fires the auto-select effect when the URL changes back to bare /chats
+  private navUrl = toSignal(
+    this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd),
+      map(() => this.router.url),
+      startWith(this.router.url)
+    ),
+    { initialValue: this.router.url }
+  );
+
   constructor() {
     effect(() => {
       const chats = this.chats();
+      this.navUrl(); // track URL changes so this re-runs on navigation back to /chats
       if (chats.length === 0) return;
-
+      if (this.route.firstChild) return; // child route already active, no need to navigate
       const current = this.selectedChatId();
       const target = chats.find(c => c.id === current) ?? chats[0];
       this.selectChat(target);
@@ -65,6 +77,11 @@ export default class ChatsListComponent {
 
   onChatSelected(chat: Chat) {
     this.selectChat(chat);
+    this.showDetail.set(true);
+  }
+
+  backToList() {
+    this.showDetail.set(false);
   }
 
   onCreateChatSelected() {

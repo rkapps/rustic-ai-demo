@@ -1,8 +1,8 @@
-<div class="flex h-full overflow-hidden gap-3 p-3">
+<div class="flex flex-col md:flex-row h-full overflow-hidden gap-2 md:gap-3 p-2 md:py-2 md:px-4">
 
-    <!-- Collapsed panel toggle -->
+    <!-- Desktop: collapsed panel toggle -->
     @if (!panelOpen()) {
-        <button class="flex-none self-start mt-0.5 h-9 w-9 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 shadow-sm transition-colors"
+        <button class="hidden md:flex flex-none self-start mt-0.5 h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 shadow-sm transition-colors"
             (click)="panelOpen.set(true)" aria-label="Open agent list">
             <lucide-icon name="menu" [size]="18"></lucide-icon>
         </button>
@@ -10,17 +10,19 @@
 
     <!-- Left column: agent list -->
     @if (panelOpen()) {
-        <div class="w-72 flex-none flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <div [class]="(showDetail() ? 'hidden md:flex' : 'flex') + ' flex-1 md:flex-none md:w-72 flex-col bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden'">
 
-            <div class="flex items-center justify-between px-4 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between px-4 py-2.5 md:py-4 border-b border-gray-200">
                 <span class="text-sm font-semibold text-primary-600">Agents</span>
-                <twang-button icon="chevron-left" variant="default" size="sm" ariaLabel="Collapse panel" (buttonClick)="panelOpen.set(false)"></twang-button>
+                <div class="hidden md:flex">
+                    <twang-button icon="chevron-left" variant="default" size="sm" ariaLabel="Collapse panel" (buttonClick)="panelOpen.set(false)"></twang-button>
+                </div>
             </div>
 
             <div class="flex-1 overflow-y-auto">
                 @for (agent of agents; track agent.id) {
                 <div (click)="onAgentSelected(agent)"
-                    class="px-4 py-4 cursor-pointer transition-all duration-150 border-b border-gray-200"
+                    class="px-4 py-2.5 md:py-4 cursor-pointer transition-all duration-150 border-b border-gray-200"
                     [class]="selectedAgent()?.id === agent.id
                         ? 'bg-blue-50 text-blue-900'
                         : 'hover:bg-gray-50'">
@@ -34,24 +36,28 @@
     }
 
     <!-- Right column -->
-    <div class="flex-1 flex flex-col overflow-hidden">
+    <div [class]="(showDetail() ? 'flex' : 'hidden md:flex') + ' flex-1 flex-col overflow-hidden'">
 
         @if (selectedAgent(); as agent) {
 
             <div class="flex-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col">
 
                 <!-- Header -->
-                <div class="flex-none px-6 py-4 border-b border-gray-200 flex items-center justify-between gap-4">
-                    <div class="text-base font-semibold text-gray-900">{{ agent.name }}</div>
-                    <div class="flex items-center gap-2 shrink-0">
+                <div class="flex-none px-4 md:px-6 py-2.5 md:py-4 border-b border-gray-200 flex flex-wrap items-center gap-2 md:gap-4">
+                    <div class="text-base font-semibold text-gray-900 flex-1">{{ agent.name }}</div>
+                    <button class="md:hidden flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors shrink-0"
+                        (click)="backToList()" aria-label="Back to agents">
+                        <lucide-icon name="arrow-left" [size]="18"></lucide-icon>
+                    </button>
+                    <div class="flex items-center gap-2 w-full md:w-auto shrink-0">
                         <span class="text-xs font-medium text-gray-500">LLM</span>
-                        <div class="w-72">
+                        <div class="flex-1 md:w-72">
                             <twang-tree-dropdown
                                 placeholder="Select provider / model"
                                 [nodes]="treeNodes()"
                                 [multiselect]="false"
                                 [checkbox]="false"
-                                size="sm"
+                                size="md"
                                 [selected]="selectedLeaf()"
                                 (selectedChange)="selectedLeaf.set($event)">
                             </twang-tree-dropdown>
@@ -60,7 +66,7 @@
                 </div>
 
                 <!-- Messages -->
-                <div class="flex-1 min-h-0 overflow-y-auto px-6 py-4" #scrollContainer>
+                <div class="flex-1 min-h-0 overflow-y-auto px-3 py-2 md:px-6 md:py-4" #scrollContainer>
                     @if (messages().length === 0) {
                         <div class="h-full flex items-center justify-center text-gray-400 text-sm">
                             Enter a prompt and submit to run the agent
@@ -69,7 +75,7 @@
                     @for (msg of messages(); track msg.id) {
                         @if (msg.role === 'user') {
                             <div class="mb-4 flex justify-end">
-                                <div class="max-w-[75%] rounded-xl px-4 py-2.5 text-sm bg-gray-50 text-black">
+                                <div class="max-w-[90%] md:max-w-[75%] rounded-xl px-3 py-2 md:px-4 md:py-2.5 text-sm bg-gray-50 text-black">
                                     <markdown [data]="msg.content" class="prose prose-sm max-w-none"></markdown>
                                 </div>
                             </div>
@@ -90,9 +96,9 @@
                 </div>
 
                 <!-- Input -->
-                <div class="flex-none py-4 border-t border-gray-200 flex justify-center">
-                    <div class="mx-auto flex w-full max-w-[75%] min-w-0 flex-col gap-2">
-                        <div class="flex w-full min-w-0 flex-wrap items-center gap-3">
+                <div class="flex-none py-2 md:py-4 border-t border-gray-200 flex justify-center">
+                    <div class="mx-auto flex w-full max-w-full md:max-w-[75%] min-w-0 flex-col gap-2 px-3 md:px-0">
+                        <div class="flex w-full min-w-0 items-center gap-3">
                             <textarea
                                 class="min-h-[5.5rem] min-w-0 flex-1 resize-y rounded-3xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm ring-1 ring-black/[0.03] outline-none transition placeholder:text-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 disabled:cursor-not-allowed disabled:opacity-60"
                                 rows="3"
@@ -111,6 +117,23 @@
                                 aria-label="Run agent">
                                 <lucide-icon name="send" [size]="16"></lucide-icon>
                             </button>
+                            @if (speechSupported) {
+                            <button
+                                type="button"
+                                class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border shadow-sm ring-1 ring-black/[0.03] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 disabled:cursor-not-allowed disabled:opacity-50"
+                                [class]="listening()
+                                    ? 'border-primary-500 bg-primary-50 text-primary-700'
+                                    : 'border-gray-200 bg-white text-gray-400 hover:bg-gray-50 hover:text-gray-600'"
+                                [disabled]="isLoading()"
+                                [attr.aria-label]="listening() ? 'Stop voice input' : 'Start voice input'"
+                                (click)="onMicrophoneClick()">
+                                @if (listening()) {
+                                    <lucide-icon name="mic-off" [size]="16"></lucide-icon>
+                                } @else {
+                                    <lucide-icon name="mic" [size]="16"></lucide-icon>
+                                }
+                            </button>
+                            }
                         </div>
                     </div>
                 </div>

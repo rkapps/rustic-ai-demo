@@ -4,7 +4,7 @@
 </div>
 }
 
-<div class="min-h-screen bg-gray-50 flex flex-col">
+<div class="min-h-screen bg-gray-100 flex flex-col">
 
     <nav class="bg-white border-b border-gray-200 px-1 md:px-4 sticky top-0 z-50 h-14 flex items-center">
 
@@ -34,7 +34,7 @@
 
 
         <!-- Main Container -->
-        <div class="max-w-[1920px] w-full mx-auto md:px-6 lg:px-12 flex items-center justify-between relative ">
+        <div class="max-w-[1920px] w-full mx-auto 2xl:px-12 flex items-center justify-between relative ">
 
             <!-- 1. LEFT SECTION: Hamburger + Logo -->
             <div class="flex items-center gap-2">
@@ -101,20 +101,21 @@
                 <ul class="flex flex-col p-4 space-y-3 font-medium">
                     <li><a routerLink="/home" (click)="close()"
                         class="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">Home</a></li>
-                    <!-- <li><a routerLink="/dashboard" (click)="close()"
-                            class="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">Dashboard</a></li> -->
                     <li><a routerLink="/chats" (click)="close()"
                             class="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">Chats</a></li>
                     <li><a routerLink="/agents" (click)="close()"
                             class="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">Agents</a></li>
                 </ul>
             </div>
+            <!-- Backdrop: closes menu on outside tap -->
+            <div class="md:hidden fixed inset-0 z-40" (click)="close()"></div>
             }
         </div>
     </nav>
 
 
     <!-- BREADCRUMBS -->
+    <!--
     <nav class="bg-white border-b border-gray-100 px-1 md:px-4 py-2" aria-label="Breadcrumb">
         <div class="max-w-[1920px] w-full mx-auto md:px-12 lg:px-16">
             <ol class="flex items-center space-x-2 text-sm text-gray-500">
@@ -137,9 +138,10 @@
             </ol>
         </div>
     </nav>
+    -->
 
     <!-- MAIN CONTENT -->
-    <main class="flex-1 min-h-0 overflow-hidden max-w-[1920px] w-full mx-auto md:px-16 py-4 pb-12 flex flex-col">
+    <main class="flex-1 min-h-0 overflow-hidden max-w-[1920px] w-full mx-auto 2xl:px-16 2xl:py-4 2xl:pb-12 flex flex-col">
         <router-outlet></router-outlet>
     </main>
 

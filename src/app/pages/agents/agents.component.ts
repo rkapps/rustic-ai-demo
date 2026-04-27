@@ -31,6 +31,7 @@ export default class AgentsComponent {
   ];
 
   panelOpen = signal(true);
+  showDetail = signal(false);
   selectedAgent = signal<Agent | null>(this.agents[0]);
 
   llmProviders = toSignal(this.dataService.getLlmProviders(), { initialValue: [] });
@@ -61,6 +62,9 @@ export default class AgentsComponent {
   lastResponseId = signal('');
   prompt = signal('Compare NVIDIA to peers');
   isLoading = signal(false);
+  listening = signal(false);
+  speechSupported = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
+  private recognition: any = null;
   private streaming = false;
   private streamingContent = '';
 
@@ -78,8 +82,13 @@ export default class AgentsComponent {
     });
   }
 
+  backToList() {
+    this.showDetail.set(false);
+  }
+
   onAgentSelected(agent: Agent) {
     this.selectedAgent.set(agent);
+    this.showDetail.set(true);
     this.messages.set([]);
     this.lastResponseId.set('');
     this.prompt.set('Compare NVIDIA to peers');
@@ -153,6 +162,26 @@ export default class AgentsComponent {
     }
 
     return raw || 'Something went wrong. Please try again.';
+  }
+
+  onMicrophoneClick() {
+    if (this.listening()) {
+      this.recognition?.stop();
+      return;
+    }
+    const SpeechRecognition = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
+    this.recognition = new SpeechRecognition();
+    this.recognition.continuous = false;
+    this.recognition.interimResults = false;
+    this.recognition.lang = 'en-US';
+    this.recognition.onstart = () => this.listening.set(true);
+    this.recognition.onend = () => this.listening.set(false);
+    this.recognition.onerror = () => this.listening.set(false);
+    this.recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      this.prompt.set(this.prompt() + transcript);
+    };
+    this.recognition.start();
   }
 
   handleEnter(event: KeyboardEvent) {

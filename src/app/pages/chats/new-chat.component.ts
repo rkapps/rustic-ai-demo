@@ -67,6 +67,7 @@ export default class NewChatComponent {
     });
 
     selectedTemplate = signal<ChatTemplate | null>(null);
+    showConfig = signal(false);
 
     llmProviders = toSignal(this.dataService.getLlmProviders(), { initialValue: [] });
 
@@ -107,8 +108,9 @@ export default class NewChatComponent {
         this.selectedModel() !== ''
     );
 
-    onTemplateSelected(template: ChatTemplate) {
+    onTemplateSelected(template: ChatTemplate, navigate = false) {
         this.selectedTemplate.set(template);
+        if (navigate) this.showConfig.set(true);
         this.title.set(template.label);
         this.system.set(template.system_prompt ?? '');
 
@@ -120,6 +122,10 @@ export default class NewChatComponent {
         if (provider && provider.models.length > 0) {
             this.selectedLeaf.set([`${provider.id}:${provider.models[0]}`]);
         }
+    }
+
+    goBackToChats() {
+        this.router.navigate(['/chats']);
     }
 
     onSuggestedPrompt(prompt: string) {
