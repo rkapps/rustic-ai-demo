@@ -1,5 +1,5 @@
 import { Component, computed, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, switchMap } from 'rxjs';
 import { DataService } from '../../core/services/data.services';
 import { AppStateService } from '../../core/services/app-state.service';
@@ -41,10 +41,6 @@ export default class AgentsComponent {
     { initialValue: [] }
   );
 
-  pullDistance = signal(0);
-  readonly PULL_THRESHOLD = 60;
-  private pullStartY = 0;
-
   treeNodes = computed<TwangTreeDropdownNode[]>(() =>
     this.llmProviders().map(p => ({
       id: `provider:${p.id}`,
@@ -80,6 +76,8 @@ export default class AgentsComponent {
   isValid = computed(() => this.prompt().trim() !== '');
 
   constructor() {
+    this.appState.refresh$.pipe(takeUntilDestroyed()).subscribe(() => this.onRefresh());
+
     effect(() => this.appState.selectAgentLlm(this.selectedLeaf()));
 
     effect(() => {
@@ -93,22 +91,6 @@ export default class AgentsComponent {
 
   onRefresh() {
     this.refresh$.next();
-  }
-
-  onListTouchStart(e: TouchEvent) {
-    this.pullStartY = e.touches[0].clientY;
-  }
-
-  onListTouchMove(e: TouchEvent) {
-    const el = e.currentTarget as HTMLElement;
-    if (el.scrollTop > 0) { this.pullDistance.set(0); return; }
-    const delta = e.touches[0].clientY - this.pullStartY;
-    if (delta > 0) this.pullDistance.set(Math.min(delta * 0.5, 80));
-  }
-
-  onListTouchEnd() {
-    if (this.pullDistance() >= this.PULL_THRESHOLD) this.onRefresh();
-    this.pullDistance.set(0);
   }
 
   backToList() {

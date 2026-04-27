@@ -1,7 +1,12 @@
 import { Injectable, signal } from "@angular/core";
+import { Subject } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class AppStateService {
+    private refreshSubject = new Subject<void>();
+    refresh$ = this.refreshSubject.asObservable();
+    triggerRefresh() { this.refreshSubject.next(); }
+
     // UI State
     selectedDashboardTab = signal<'overview' | 'reports'>('overview');
     searchChatQuery = signal('');
