@@ -1,5 +1,5 @@
 import { Component, signal, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { NotificationService } from '../../core/services/notification.service';
@@ -8,7 +8,7 @@ import { TwangButtonComponent } from '../../components/ui/twang-button/twang-but
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterLink, TwangButtonComponent],
+  imports: [FormsModule, TwangButtonComponent],
   template: `
     <section class="h-full flex flex-col items-center justify-center bg-white px-4">
 
