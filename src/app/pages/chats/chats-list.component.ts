@@ -48,7 +48,7 @@ export default class ChatsListComponent {
   });
 
   panelOpen = signal(true);
-  showDetail = signal(false);
+  showDetail = signal(window.innerWidth >= 768);
   selectedChatId = this.appState.selectedChatId;
 
   selectedChat = computed(() => this.chats().find(c => c.id === this.selectedChatId()) ?? null);
@@ -72,6 +72,7 @@ export default class ChatsListComponent {
       const current = this.selectedChatId();
       const target = chats.find(c => c.id === current) ?? chats[0];
       this.selectChat(target);
+      if (window.innerWidth >= 768) this.showDetail.set(true);
     }, { allowSignalWrites: true });
   }
 

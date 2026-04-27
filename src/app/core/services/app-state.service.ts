@@ -5,7 +5,7 @@ export class AppStateService {
     // UI State
     selectedDashboardTab = signal<'overview' | 'reports'>('overview');
     searchChatQuery = signal('');
-    selectedChatId = signal<string>('');
+    selectedChatId = signal<string>(this.loadFromStorage('selectedChatId', ''));
     selectedAgentLlm = signal<string[]>(this.loadFromStorage('selectedAgentLlm', []));
 
     // Actions
@@ -15,6 +15,7 @@ export class AppStateService {
 
     selectChat(id: string) {
         this.selectedChatId.set(id);
+        localStorage.setItem('selectedChatId', JSON.stringify(id));
     }
 
     selectAgentLlm(leaf: string[]) {
