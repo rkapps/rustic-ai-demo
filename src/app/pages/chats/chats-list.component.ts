@@ -51,6 +51,10 @@ export default class ChatsListComponent {
   showDetail = signal(window.innerWidth >= 768);
   selectedChatId = this.appState.selectedChatId;
 
+  pullDistance = signal(0);
+  readonly PULL_THRESHOLD = 60;
+  private pullStartY = 0;
+
   selectedChat = computed(() => this.chats().find(c => c.id === this.selectedChatId()) ?? null);
 
   // Re-fires the auto-select effect when the URL changes back to bare /chats
@@ -91,6 +95,22 @@ export default class ChatsListComponent {
 
   onRefresh() {
     this.refresh$.next();
+  }
+
+  onListTouchStart(e: TouchEvent) {
+    this.pullStartY = e.touches[0].clientY;
+  }
+
+  onListTouchMove(e: TouchEvent) {
+    const el = e.currentTarget as HTMLElement;
+    if (el.scrollTop > 0) { this.pullDistance.set(0); return; }
+    const delta = e.touches[0].clientY - this.pullStartY;
+    if (delta > 0) this.pullDistance.set(Math.min(delta * 0.5, 80));
+  }
+
+  onListTouchEnd() {
+    if (this.pullDistance() >= this.PULL_THRESHOLD) this.onRefresh();
+    this.pullDistance.set(0);
   }
 
   onDeleteChat(chat: Chat) {

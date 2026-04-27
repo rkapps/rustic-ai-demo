@@ -1,11 +1,10 @@
-# rustic-ai-demo
+# rustic-ai
 
-A production-ready rustic-ai-demo template with a built-in chat feature, Firebase auth, and a pre-configured component library.
+A production-ready rustic-ai template with a built-in chat feature, Firebase auth, and a pre-configured component library.
 
 ## Features
 
 - ⚡ Angular 21 with standalone components
-- 💬 Chat feature (list, detail, new chat) using `ngx-twang-ui`
 - 🔐 Firebase Authentication with auth guard
 - 🎨 Tailwind CSS + Flowbite
 - 📦 Lazy-loaded routes
@@ -16,28 +15,18 @@ A production-ready rustic-ai-demo template with a built-in chat feature, Firebas
 
 - Node.js 22+
 - Angular CLI 21
-- Access to [ngx-twang-ui](https://github.com/your-org/ngx-twang-ui-repo)
 
 ## Getting Started
 
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-org/rustic-ai-demo.git my-new-app
+git clone https://github.com/your-org/rustic-ai.git my-new-app
 cd my-new-app
 ```
 
-### 2. Clone and build the component library
 
-```bash
-git clone https://github.com/your-org/ngx-twang-ui-repo.git ../ngx-twang-ui-repo
-cd ../ngx-twang-ui-repo
-npm install
-ng build ngx-twang-ui
-cd ../my-new-app
-```
-
-### 3. Configure Firebase
+### 2. Configure Firebase
 
 Copy the environment template and fill in your Firebase project details:
 
@@ -58,7 +47,7 @@ export const environment = {
 };
 ```
 
-### 4. Install and run
+### 3. Install and run
 
 ```bash
 npm install
@@ -82,16 +71,6 @@ src/
 │   └── environment.template.ts  # safe to commit
 ```
 
-## Component Library
-
-This app uses [ngx-twang-ui](https://github.com/your-org/ngx-twang-ui-repo), a local Angular component library. It is referenced as a `file:` dependency in `package.json`:
-
-```json
-"ngx-twang-ui": "file:../ngx-twang-ui-repo/dist/ngx-twang-ui"
-```
-
-> ⚠️ The library must be built before running this app. See step 2 above.
-
 ### Important: Keep Angular versions in sync
 
 The library and this app must use the **exact same Angular version**. All `@angular/*` packages are pinned without `^` or `~` for this reason.
@@ -113,7 +92,6 @@ A `.vscode/settings.json` is included to prevent Angular internal chunk files fr
 ## New Project Checklist
 
 - [ ] Update `name` in `package.json`
-- [ ] Clone and build `ngx-twang-ui-repo`
 - [ ] Add Firebase config to `environment.ts`
 - [ ] Run `npm install`
 - [ ] Run `ng serve`

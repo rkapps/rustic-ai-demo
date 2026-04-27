@@ -1,5 +1,6 @@
 import { Component, computed, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { BehaviorSubject, switchMap } from 'rxjs';
 import { DataService } from '../../core/services/data.services';
 import { AppStateService } from '../../core/services/app-state.service';
 import { TwangButtonComponent } from '../../components/ui/twang-button/twang-button';
@@ -34,7 +35,15 @@ export default class AgentsComponent {
   showDetail = signal(false);
   selectedAgent = signal<Agent | null>(this.agents[0]);
 
-  llmProviders = toSignal(this.dataService.getLlmProviders(), { initialValue: [] });
+  private refresh$ = new BehaviorSubject<void>(undefined);
+  llmProviders = toSignal(
+    this.refresh$.pipe(switchMap(() => this.dataService.getLlmProviders())),
+    { initialValue: [] }
+  );
+
+  pullDistance = signal(0);
+  readonly PULL_THRESHOLD = 60;
+  private pullStartY = 0;
 
   treeNodes = computed<TwangTreeDropdownNode[]>(() =>
     this.llmProviders().map(p => ({
@@ -80,6 +89,26 @@ export default class AgentsComponent {
         if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
       }, 50);
     });
+  }
+
+  onRefresh() {
+    this.refresh$.next();
+  }
+
+  onListTouchStart(e: TouchEvent) {
+    this.pullStartY = e.touches[0].clientY;
+  }
+
+  onListTouchMove(e: TouchEvent) {
+    const el = e.currentTarget as HTMLElement;
+    if (el.scrollTop > 0) { this.pullDistance.set(0); return; }
+    const delta = e.touches[0].clientY - this.pullStartY;
+    if (delta > 0) this.pullDistance.set(Math.min(delta * 0.5, 80));
+  }
+
+  onListTouchEnd() {
+    if (this.pullDistance() >= this.PULL_THRESHOLD) this.onRefresh();
+    this.pullDistance.set(0);
   }
 
   backToList() {

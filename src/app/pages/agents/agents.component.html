@@ -14,12 +14,24 @@
 
             <div class="flex items-center justify-between px-4 py-2.5 md:py-4 border-b border-gray-200">
                 <span class="text-sm font-semibold text-primary-600">Agents</span>
-                <div class="hidden md:flex">
-                    <twang-button icon="chevron-left" variant="default" size="sm" ariaLabel="Collapse panel" (buttonClick)="panelOpen.set(false)"></twang-button>
+                <div class="flex items-center gap-1">
+                    <twang-button icon="refresh-cw" variant="default" size="sm" ariaLabel="Refresh" (buttonClick)="onRefresh()"></twang-button>
+                    <div class="hidden md:flex">
+                        <twang-button icon="chevron-left" variant="default" size="sm" ariaLabel="Collapse panel" (buttonClick)="panelOpen.set(false)"></twang-button>
+                    </div>
                 </div>
             </div>
 
-            <div class="flex-1 overflow-y-auto">
+            <div class="flex-1 overflow-y-auto"
+                (touchstart)="onListTouchStart($event)"
+                (touchmove)="onListTouchMove($event)"
+                (touchend)="onListTouchEnd()">
+                @if (pullDistance() > 0) {
+                    <div class="flex items-center justify-center transition-all" [style.height.px]="pullDistance()">
+                        <lucide-icon name="refresh-cw" [size]="16" class="text-primary-400"
+                            [class.animate-spin]="pullDistance() >= PULL_THRESHOLD"></lucide-icon>
+                    </div>
+                }
                 @for (agent of agents; track agent.id) {
                 <div (click)="onAgentSelected(agent)"
                     class="px-4 py-2.5 md:py-4 cursor-pointer transition-all duration-150 border-b border-gray-200"
