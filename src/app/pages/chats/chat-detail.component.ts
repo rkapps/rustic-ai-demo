@@ -1,7 +1,7 @@
-import { Component } from "@angular/core";
-import { rxResource, toObservable, toSignal } from "@angular/core/rxjs-interop";
-import { input, signal, effect, computed, linkedSignal, ElementRef, inject, viewChild } from "@angular/core";
-import { Chat, ChatChunkReponse, ChatMessage, ChatRequest, ChatStreamingMessage } from "../../models/chat";
+import { Component, DestroyRef, inject } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { input, signal, effect, computed, ElementRef, viewChild } from "@angular/core";
+import { Chat, ChatChunkReponse, ChatMessage, ChatRequest } from "../../models/chat";
 import { DataService } from "../../core/services/data.services";
 import { MarkdownModule } from 'ngx-markdown';
 import { LucideAngularModule } from 'lucide-angular';
@@ -19,9 +19,11 @@ import { LucideAngularModule } from 'lucide-angular';
 export default class ChatDetailComponent {
   id = input<string>('');
   private dataService = inject(DataService);
+  private destroyRef = inject(DestroyRef);
   scrollContainer = viewChild<ElementRef>('scrollContainer');
 
   // State
+  private initialLoad = true;
   count = 0;
   streaming = false;
   streaming_content = "";
@@ -66,19 +68,25 @@ export default class ChatDetailComponent {
   constructor() {
 
     effect(() => {
-      const messages = this.messages();
-      setTimeout(() => {
-        const container = this.scrollContainer();
-        if (container?.nativeElement) {
-          const el = container.nativeElement;
-          el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
-        }
-      }, 100);
+      const msgs = this.messages();
+      if (this.initialLoad) {
+        requestAnimationFrame(() => {
+          const el = this.scrollContainer()?.nativeElement;
+          if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'instant' });
+          if (msgs.length > 0) this.initialLoad = false;
+        });
+      } else {
+        setTimeout(() => {
+          const el = this.scrollContainer()?.nativeElement;
+          if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+        }, 100);
+      }
     });
 
     effect(() => {
       const id = this.id();
       if (id) {
+        this.initialLoad = true;
         this.messages.set([]);
         this.isLoading.set(false);
         this.lastResponseId.set('');
@@ -96,7 +104,7 @@ export default class ChatDetailComponent {
 
   loadChatHistory() {
     // console.log(this.id());
-    this.dataService.getChatDetails(this.id()).subscribe({
+    this.dataService.getChatDetails(this.id()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         const messagesWithIds = data.messages.map((msg) => {
           this.count++; // Increment the global counter
@@ -151,7 +159,7 @@ export default class ChatDetailComponent {
 
   private postNonStreamingChatCompletion() {
 
-    this.dataService.chatCompletion(this.request()).subscribe({
+    this.dataService.chatCompletion(this.request()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         console.log(data);
         this.appendToMessages(data.role, data.content, data.response_id);
@@ -165,9 +173,8 @@ export default class ChatDetailComponent {
     this.streaming = true;
     this.streaming_content = "";
     let first_chunk = true;
-    let save_prompt = this.request().prompt;
 
-    this.dataService.chatCompletionStream<ChatChunkReponse>(this.request()).subscribe({
+    this.dataService.chatCompletionStream<ChatChunkReponse>(this.request()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
 
         if (first_chunk) {
@@ -201,7 +208,7 @@ export default class ChatDetailComponent {
 
         }
       },
-      error: (err) => {
+      error: () => {
         this.streaming = false;
       }
 
@@ -258,7 +265,7 @@ export default class ChatDetailComponent {
     this.recognition.start();
   }
 
-  handleEnter(event: KeyboardEvent) {
+  handleEnter(_event: KeyboardEvent) {
     // Submit on Enter, but allow Shift+Enter for new line
     // if (!event.shiftKey) {
     // event.preventDefault();
