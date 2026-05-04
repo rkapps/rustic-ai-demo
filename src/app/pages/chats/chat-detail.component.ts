@@ -1,7 +1,9 @@
 import { Component, DestroyRef, inject } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { forkJoin } from "rxjs";
 import { input, signal, effect, computed, ElementRef, viewChild } from "@angular/core";
-import { Chat, ChatChunkReponse, ChatMessage, ChatRequest } from "../../models/chat";
+import { Router } from "@angular/router";
+import { Chat, ChatChunkReponse, ChatMessage, ChatRequest, Turn } from "../../models/chat";
 import { DataService } from "../../core/services/data.services";
 import { MarkdownModule } from 'ngx-markdown';
 import { LucideAngularModule } from 'lucide-angular';
@@ -20,6 +22,7 @@ export default class ChatDetailComponent {
   id = input<string>('');
   private dataService = inject(DataService);
   private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
   scrollContainer = viewChild<ElementRef>('scrollContainer');
 
   // State
@@ -45,7 +48,7 @@ export default class ChatDetailComponent {
     title: '',
     llm: '',
     model: '',
-    system: '',
+    system_prompt: null,
     prompt: '',
     stream: false,
     messages: []
@@ -103,27 +106,24 @@ export default class ChatDetailComponent {
   ngOnInit() {}
 
   loadChatHistory() {
-    // console.log(this.id());
-    this.dataService.getChatDetails(this.id()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data) => {
-        const messagesWithIds = data.messages.map((msg) => {
-          this.count++; // Increment the global counter
-          return {
-            ...msg,
-            id: this.count // Assign the newly incremented value
-          };
+    forkJoin({
+      chat: this.dataService.getChatDetails(this.id()),
+      turns: this.dataService.getTurns(this.id())
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: ({ chat, turns }) => {
+        this.chat.set(chat);
+        const messages: ChatMessage[] = [];
+        turns.forEach((turn: Turn) => {
+          this.count++;
+          messages.push({ id: this.count, role: 'user', content: turn.user_prompt, response_id: '' });
+          if (turn.response_content) {
+            this.count++;
+            messages.push({ id: this.count, role: 'assistant', content: turn.response_content, response_id: turn.response_id ?? '' });
+          }
         });
-
-        console.log(data);
-        data.messages = messagesWithIds;
-        this.chat.set(data);
-        this.messages.set(data.messages);
-
-        if (this.messages().length == 0 && this.chat().system.length > 0) {
-          this.postChatRequest(this.chat().system);
-        }
+        this.messages.set(messages);
       },
-      error: (err) => console.error('Error loading history:', err)
+      error: () => this.router.navigate(['/chats'])
     });
   }
 
@@ -159,9 +159,8 @@ export default class ChatDetailComponent {
 
   private postNonStreamingChatCompletion() {
 
-    this.dataService.chatCompletion(this.request()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.dataService.chatCompletion(this.id(), this.request().prompt).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
-        console.log(data);
         this.appendToMessages(data.role, data.content, data.response_id);
         this.request.update(p => ({ ...p, prompt: "" }));
         this.chatRequestForm.prompt.set('');
@@ -174,7 +173,7 @@ export default class ChatDetailComponent {
     this.streaming_content = "";
     let first_chunk = true;
 
-    this.dataService.chatCompletionStream<ChatChunkReponse>(this.request()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.dataService.chatCompletionStream(this.id(), this.request().prompt).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
 
         if (first_chunk) {

@@ -35,7 +35,7 @@ export default class ChatsListComponent {
         title: p.title,
         llm: p.llm,
         model: p.model,
-        system: p.system,
+        system_prompt: p.system_prompt,
         prompt: p.prompt,
         stream: p.stream,
         messages: p.messages

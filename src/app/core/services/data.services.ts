@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { Chat, ChatChunkReponse, ChatMessage, ChatStreamingMessage } from "../../models/chat";
+import { Chat, ChatChunkReponse, ChatMessage, ChatStreamingMessage, ConversationRequest, Turn } from "../../models/chat";
 import { ChatTemplate } from "../../models/chat-template";
 import { catchError, map, Observable, throwError } from "rxjs";
 import { LlmProvider } from "../../models/llm_provider";
@@ -16,61 +16,48 @@ export class DataService extends BaseHttpService {
 
 
     getChats() {
-        return this.get<Chat[]>('/chats');
+        return this.get<Chat[]>('/conversations');
     }
 
     getChatDetails(chat_id: string) {
-        return this.get<Chat>(`/chats/${chat_id}`);
+        return this.get<Chat>(`/conversations/${chat_id}`);
     }
 
     deleteChat(chat_id: string) {
-        return this.delete<void>(`/chats/${chat_id}`);
+        return this.delete<void>(`/conversations/${chat_id}`);
     }
 
     getLlmProviders() {
-        return this.get<LlmProvider[]>("/llm/providers");
+        return this.get<LlmProvider[]>('/llm-providers');
     }
 
-    getTemplates() {
-        return this.get<{ templates: ChatTemplate[] }>('/templates');
+    getChatTemplates() {
+        return this.get<ChatTemplate[]>('/chat-templates');
     }
 
-    createChat(data: any): Observable<Chat> {
+    getTurns(id: string) {
+        return this.get<Turn[]>(`/conversations/${id}/turns`);
+    }
 
-        let url = this.baseUrl + '/chats/create';
-        return this.http.post<any>(url, data).pipe(
-            // Marshal the plain JSON response into a User class instance
-            // map(response => )),
-            catchError(this.handleError) // Handle error locally          
+    createConversation(data: ConversationRequest): Observable<Chat> {
+        return this.http.post<Chat>(this.baseUrl + '/conversations', data).pipe(
+            catchError(this.handleError)
         );
     }
 
-    chatCompletion(data: any): Observable<ChatMessage> {
-        let url = this.baseUrl + '/chats/completion';
-        return this.http.post<any>(url, data).pipe(
-            // Marshal the plain JSON response into a User class instance
-            // map(response => )),
-            catchError(this.handleError) // Handle error locally          
+    chatCompletion(id: string, prompt: string): Observable<ChatMessage> {
+        return this.http.post<ChatMessage>(this.baseUrl + `/conversations/${id}/turns`, { prompt }).pipe(
+            catchError(this.handleError)
         );
-
     }
 
-    chatCompletionStream<T>(data: any): Observable<T> {
-
-        let url = this.baseUrl + '/chats/completion_streaming';
-        console.log(data);
-        return this.sseClient.stream(
-            url,
-            { keepAlive: false },
-            { body: data },
-            'POST'
-        ).pipe(
-            // Extract the data from the MessageEvent automatically
+    chatCompletionStream(id: string, prompt: string): Observable<ChatChunkReponse> {
+        const url = this.baseUrl + `/conversations/${id}/turns/stream`;
+        return this.sseClient.stream(url, { keepAlive: false }, { body: { prompt } }, 'POST').pipe(
             map(event => {
-                // console.log(event);
                 if (event instanceof MessageEvent) {
                     try {
-                        return JSON.parse(event.data) as T;
+                        return JSON.parse(event.data) as ChatChunkReponse;
                     } catch (e) {
                         console.error('JSON parse error:', e, event.data);
                         throw new Error(`Invalid JSON: ${event.data}`);

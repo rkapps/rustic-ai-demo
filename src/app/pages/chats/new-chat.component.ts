@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from "@angular/core";
+import { Component, computed, effect, inject, signal } from "@angular/core";
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from "@angular/router";
-import { map } from "rxjs";
 import { DataService } from "../../core/services/data.services";
 import { AppStateService } from "../../core/services/app-state.service";
 import { ChatTemplate } from "../../models/chat-template";
@@ -35,7 +34,6 @@ const ICON_MAP: Record<string, string> = {
     selector: 'app-new-chat',
     imports: [TwangButtonComponent, TwangTreeDropdownComponent, LucideAngularModule],
     templateUrl: './new-chat.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class NewChatComponent {
 
@@ -44,10 +42,7 @@ export default class NewChatComponent {
     private router = inject(Router);
     private route = inject(ActivatedRoute);
 
-    templates = toSignal(
-        this.dataService.getTemplates().pipe(map(r => r.templates.filter(t => t.template_type === 'chat'))),
-        { initialValue: [] }
-    );
+    templates = toSignal(this.dataService.getChatTemplates(), { initialValue: [] });
 
     categories = computed(() => {
         const seen = new Set<string>();
@@ -92,13 +87,14 @@ export default class NewChatComponent {
     });
 
     title = signal('');
-    stream = signal(false);
+    stream = signal(true);
     system = signal('');
 
     constructor() {
         effect(() => {
             const first = this.templates()[0];
-            if (first && !this.selectedTemplate()) this.onTemplateSelected(first);
+            const providers = this.llmProviders();
+            if (first && providers.length > 0 && !this.selectedTemplate()) this.onTemplateSelected(first);
         });
     }
 
@@ -111,7 +107,7 @@ export default class NewChatComponent {
     onTemplateSelected(template: ChatTemplate, navigate = false) {
         this.selectedTemplate.set(template);
         if (navigate) this.showConfig.set(true);
-        this.title.set(template.label);
+        this.title.set(template.title);
         this.system.set(template.system_prompt ?? '');
 
         const recommended = template.recommended_llm.toLowerCase();
@@ -138,15 +134,14 @@ export default class NewChatComponent {
 
     submit() {
         if (!this.isValid()) return;
-        this.dataService.createChat({
-            id: '',
+        this.dataService.createConversation({
+            conversation_type: 'chat',
             title: this.title(),
+            template_id: this.selectedTemplate()?.id,
+            system_prompt: this.system() || undefined,
             llm: this.selectedLlmId(),
             model: this.selectedModel(),
-            system: this.system(),
             stream: this.stream(),
-            prompt: '',
-            messages: []
         }).subscribe({
             next: (chat) => {
                 this.appState.selectChat(chat.id);
