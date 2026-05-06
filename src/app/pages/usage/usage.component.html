@@ -1,0 +1,70 @@
+<div class="flex flex-col md:flex-row h-full overflow-hidden gap-2 md:gap-6">
+
+    <!-- Left: filters -->
+    <div class="flex-none w-full md:w-72 flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+
+        <div class="flex-none px-4 py-3 border-b border-gray-200">
+            <span class="text-sm font-semibold text-primary-600">Filters</span>
+        </div>
+
+        <div class="flex-1 flex flex-col gap-4 p-4 overflow-y-auto">
+
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-2">Type</label>
+                <div class="flex flex-col gap-1.5">
+                    @for (opt of ['all', 'chat', 'agent']; track opt) {
+                        <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                            <input type="radio" name="convType" [value]="opt"
+                                [checked]="convType() === opt"
+                                (change)="convType.set($any(opt))"
+                                class="accent-primary-600" />
+                            {{ opt === 'all' ? 'All' : opt === 'chat' ? 'Chat' : 'Agent' }}
+                        </label>
+                    }
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-2">LLM</label>
+                <div class="flex flex-col gap-1.5">
+                    @for (opt of ['all', 'openai', 'gemini', 'anthropic', 'local']; track opt) {
+                        <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                            <input type="radio" name="llm" [value]="opt"
+                                [checked]="llm() === opt"
+                                (change)="llm.set($any(opt))"
+                                class="accent-primary-600" />
+                            {{ opt === 'all' ? 'All' : opt === 'openai' ? 'OpenAI' : opt === 'gemini' ? 'Gemini' : opt === 'anthropic' ? 'Anthropic' : 'Local' }}
+                        </label>
+                    }
+                </div>
+            </div>
+
+            <div>
+                <twang-datepicker label="From" placeholder="Start date"
+                    [value]="startDate()"
+                    (valueChange)="startDate.set($event)">
+                </twang-datepicker>
+            </div>
+
+            <div>
+                <twang-datepicker label="To" placeholder="End date"
+                    [value]="endDate()"
+                    (valueChange)="endDate.set($event)">
+                </twang-datepicker>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Right: usage table -->
+    <div class="flex-1 flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden min-w-0 min-h-0">
+        <app-usage-table
+            [filterType]="convType()"
+            [filterLlm]="llm()"
+            [filterStartDate]="startDate()"
+            [filterEndDate]="endDate()">
+        </app-usage-table>
+    </div>
+
+</div>

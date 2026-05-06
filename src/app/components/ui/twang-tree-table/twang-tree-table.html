@@ -1,6 +1,6 @@
 <div
   class="twang-table-panel"
-  [class.twang-table-panel--footer]="!!footer?.length && !!scrollPanelMaxHeight"
+  [class.twang-table-panel--footer]="!!footer?.length && (!!scrollPanelMaxHeight || stickyFooter)"
   [class.twang-table-panel--fill-container]="fillContainerWidth"
   [style.max-height]="scrollPanelMaxHeight ? scrollPanelMaxHeight : null"
   [style.min-height]="effectiveScrollPanelMinHeight()"
@@ -10,11 +10,11 @@
       <div class="twang-table-vscroll">
         <div
           class="twang-table-body-wrap"
-          [class.twang-table-footer-fill]="!!footer?.length && !!scrollPanelMaxHeight"
+          [class.twang-table-footer-fill]="!!footer?.length && (!!scrollPanelMaxHeight || stickyFooter)"
         >
           <table
             class="twang-table {{ tableMinWidthClass }} border-separate border-spacing-0 text-left"
-            [class.twang-table--footer-layout]="!!footer?.length && !!scrollPanelMaxHeight"
+            [class.twang-table--footer-layout]="!!footer?.length && (!!scrollPanelMaxHeight || stickyFooter)"
           >
             <colgroup>
               @for (col of columns; track col.id) {

@@ -21,8 +21,14 @@ export const routes: Routes = [
     {
         path: 'agents',
         canActivate: [firebaseAuthGuard],
-        loadComponent: () => import('./pages/agents/agents.component'),
+        loadChildren: () => import('./pages/agents/agents.routes').then(m => m.AGENT_ROUTES),
         data: { breadcrumb: 'Agents' }
+    },
+    {
+        path: 'usage',
+        canActivate: [firebaseAuthGuard],
+        loadComponent: () => import('./pages/usage/usage.component'),
+        data: { breadcrumb: 'Usage' }
     },
     { path: 'settings', loadComponent: () => import('./pages/settings/settings.component'), canActivate: [authGuard] },
     { path: '', redirectTo: 'chats', pathMatch: 'full' }

@@ -1,0 +1,30 @@
+<div class="flex-none px-4 md:px-6 py-3 border-b border-gray-200 flex items-center gap-2">
+    <span class="flex-1 text-sm font-semibold text-primary-600">Token Usage</span>
+    <twang-button icon="refresh-cw" variant="default" size="sm" ariaLabel="Refresh" [loading]="loading()" (buttonClick)="load()"></twang-button>
+</div>
+
+@if (treeNodes().length === 0) {
+    @if (loading()) {
+        <div class="flex-1 flex items-center justify-center">
+            <div class="flex items-center gap-2 text-sm text-gray-400">
+                <lucide-icon name="loader-circle" [size]="16" class="animate-spin"></lucide-icon>
+                Loading...
+            </div>
+        </div>
+    } @else {
+        <div class="flex-1 flex flex-col items-center justify-center gap-2 text-center px-6">
+            <lucide-icon name="chart-bar" [size]="40" class="text-gray-300"></lucide-icon>
+            <p class="text-sm text-gray-400">No usage data found</p>
+        </div>
+    }
+} @else {
+    <twang-tree-table
+        [nodes]="treeNodes()"
+        [columns]="columns"
+        [footer]="footer()"
+        [initialExpandedDepth]="-1"
+        [fillContainerWidth]="true"
+        [stickyFooter]="true"
+        tableMinWidthClass="min-w-[860px]">
+    </twang-tree-table>
+}

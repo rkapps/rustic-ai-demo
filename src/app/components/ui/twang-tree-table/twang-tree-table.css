@@ -356,3 +356,38 @@
   overflow: hidden;
 }
 
+/* ─── Cell / header / footer padding ───────────────────────────────────────── */
+
+.portfolio-table-th {
+  padding: 0.5rem 0.75rem;
+  white-space: nowrap;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--app-text-muted, #6b7280);
+}
+
+.portfolio-table-th--right {
+  text-align: right;
+}
+
+.portfolio-table-cell {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.portfolio-table-cell--numeric {
+  text-align: right;
+}
+
+.portfolio-table-footer-cell {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.portfolio-table-footer-cell--numeric {
+  text-align: right;
+}
+

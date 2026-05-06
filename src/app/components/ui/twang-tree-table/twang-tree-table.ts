@@ -32,6 +32,7 @@ export class TwangTreeTableComponent<T extends object> implements OnChanges {
 
   @Input({ required: true }) columns: TwangTreeTableColumn<T>[] = [];
   @Input() footer: TwangTableFooterCell[] | null = null;
+  @Input() stickyFooter = false;
   @Input() emptyMessage = 'No data.';
   @Input() tableMinWidthClass = 'min-w-[980px]';
   @Input() fillContainerWidth = false;

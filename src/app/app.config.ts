@@ -10,7 +10,7 @@ import {
   Search, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Plus,
   RefreshCw, ChevronLeft, ChevronRight, ChevronDown, Trash2, LoaderCircle,
   Menu, Send, MessageSquare, Mic, MicOff,
-  ArrowUpDown,
+  ArrowUpDown, Calendar, X,
   Bot, GraduationCap, Code, ChartBar, BookOpen, Briefcase, Brain, Globe,
   FlaskConical, Pencil, Calculator, Music, Image, FileText, Languages, MessageCircle,
 } from 'lucide-angular';
@@ -31,7 +31,7 @@ export const appConfig: ApplicationConfig = {
         Search, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Plus,
         RefreshCw, ChevronLeft, ChevronRight, ChevronDown, Trash2, LoaderCircle,
         Menu, Send, MessageSquare, Mic, MicOff,
-        ArrowUpDown,
+        ArrowUpDown, Calendar, X,
         Bot, GraduationCap, Code, ChartBar, BookOpen, Briefcase, Brain, Globe,
         FlaskConical, Pencil, Calculator, Music, Image, FileText, Languages, MessageCircle,
       }),

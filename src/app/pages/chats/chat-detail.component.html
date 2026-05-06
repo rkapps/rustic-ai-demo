@@ -13,10 +13,10 @@
 
         @for (msg of messages(); track msg.id) {
             <div class="mb-4" [class]="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
-                <div class="max-w-[90%] md:max-w-[75%] rounded-xl px-3 py-2 md:px-4 md:py-2.5 text-sm"
+                <div class="rounded-xl px-3 py-2 md:px-4 md:py-2.5 text-sm"
                     [class]="msg.role === 'user'
-                        ? 'bg-gray-50 text-black'
-                        : 'bg-white text-gray-900'">
+                        ? 'max-w-[90%] md:max-w-[75%] bg-gray-50 text-black'
+                        : 'w-full bg-white text-gray-900'">
                     <markdown [data]="msg.content" class="prose prose-sm max-w-none">
                     </markdown>
                 </div>

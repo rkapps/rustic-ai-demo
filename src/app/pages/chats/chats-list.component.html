@@ -16,7 +16,7 @@
                 <span class="text-sm font-semibold text-primary-600">Chats ({{ chats().length }})</span>
                 <div class="flex items-center gap-1">
                     <twang-button icon="plus" variant="default" size="sm" ariaLabel="New chat" (buttonClick)="onCreateChatSelected()"></twang-button>
-                    <twang-button icon="refresh-cw" variant="default" size="sm" ariaLabel="Refresh chats" (buttonClick)="onRefresh()"></twang-button>
+                    <twang-button icon="refresh-cw" variant="default" size="sm" ariaLabel="Refresh chats" [loading]="refreshing()" (buttonClick)="onRefresh()"></twang-button>
                     <div class="hidden md:flex">
                         <twang-button icon="chevron-left" variant="default" size="sm" ariaLabel="Collapse panel" (buttonClick)="panelOpen.set(false)"></twang-button>
                     </div>
@@ -67,6 +67,10 @@
             @if (selectedChat(); as chat) {
                 <div class="flex-none px-4 md:px-6 py-2.5 md:py-4 border-b border-gray-200 flex items-center gap-2">
                     <div class="flex-1 text-base font-semibold text-gray-900 truncate">{{ chat.title }}</div>
+                    <twang-button icon="chart-bar" variant="default" size="sm" ariaLabel="Toggle usage"
+                        [class.text-primary-600]="showUsage()"
+                        (buttonClick)="appState.setShowChatUsage(!showUsage())">
+                    </twang-button>
                     <twang-button icon="trash-2" variant="default" size="sm" ariaLabel="Delete chat"
                         (buttonClick)="onDeleteChat(chat)">
                     </twang-button>
@@ -76,9 +80,12 @@
                     </button>
                 </div>
             }
-            <div class="flex-1 overflow-hidden">
+            <div class="flex-1 flex flex-col overflow-hidden min-h-0" [class.hidden]="showUsage()">
                 <router-outlet />
             </div>
+            @if (showUsage()) {
+                <app-usage-table [conversationId]="selectedChatId()"></app-usage-table>
+            }
         </div>
 
     </div>

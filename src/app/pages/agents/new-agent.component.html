@@ -1,0 +1,110 @@
+<div class="flex flex-col md:flex-row h-full overflow-hidden gap-2 md:gap-4 p-2 md:py-2 md:px-4">
+
+    <!-- Left panel: agent list -->
+    <div [class]="(showConfig() ? 'hidden md:flex' : 'flex') + ' flex-1 md:flex-none md:w-80 flex-col bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden'">
+
+        <div class="flex items-center gap-2 px-4 py-2.5 md:py-4 border-b border-gray-200">
+            <span class="flex-1 text-sm font-semibold text-primary-600">Start agent conversation</span>
+            <button class="md:hidden flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors shrink-0"
+                (click)="goBack()" aria-label="Back to agents">
+                <lucide-icon name="arrow-left" [size]="18"></lucide-icon>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto">
+            @for (agent of agents(); track agent.id) {
+                <div (click)="onAgentSelected(agent, true)"
+                    [class]="'mx-2 mb-0.5 mt-1 px-3 py-1.5 rounded-lg cursor-pointer transition-all duration-150 flex items-start gap-3 ' + (selectedAgent()?.id === agent.id ? 'bg-primary-50 text-primary-900' : 'hover:bg-gray-50')">
+                    <span [class]="'shrink-0 flex items-center justify-center w-8 h-8 rounded-lg border ' + (selectedAgent()?.id === agent.id ? 'border-primary-200 bg-primary-50 text-primary-600' : 'border-gray-200 bg-white text-gray-400')">
+                        <lucide-icon name="bot" [size]="18"></lucide-icon>
+                    </span>
+                    <div class="min-w-0">
+                        <div class="text-sm font-medium truncate">{{ agent.name }}</div>
+                        <div class="text-xs text-gray-400 mt-0.5 line-clamp-2">{{ agent.description }}</div>
+                    </div>
+                </div>
+            } @empty {
+                <div class="flex flex-col items-center justify-center gap-1 py-10 px-4 text-center">
+                    <p class="text-xs text-gray-400">No agents available.</p>
+                </div>
+            }
+        </div>
+
+    </div>
+
+    <!-- Right panel: config form -->
+    <div [class]="(showConfig() ? 'flex' : 'hidden md:flex') + ' flex-1 flex-col overflow-hidden'">
+
+        @if (selectedAgent(); as agent) {
+
+            <div class="flex-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col">
+
+                <div class="flex-none px-4 md:px-6 py-2.5 md:py-4 border-b border-gray-200 flex items-center gap-2 md:gap-3">
+                    <span class="flex items-center justify-center w-9 h-9 rounded-xl border border-primary-200 bg-primary-50 text-primary-600 shrink-0">
+                        <lucide-icon name="bot" [size]="20"></lucide-icon>
+                    </span>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-base font-semibold text-gray-900 truncate">{{ agent.name }}</div>
+                        <div class="text-xs text-gray-500 mt-0.5 truncate">{{ agent.description }}</div>
+                    </div>
+                    <button class="md:hidden flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors shrink-0"
+                        (click)="showConfig.set(false)" aria-label="Back to agent list">
+                        <lucide-icon name="arrow-left" [size]="18"></lucide-icon>
+                    </button>
+                </div>
+
+                <div class="flex-1 overflow-y-auto px-4 md:px-6 py-4 flex flex-col gap-4">
+
+                    <div class="flex flex-col md:flex-row md:items-end gap-3 md:gap-4">
+                        <div class="flex-1">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Conversation title</label>
+                            <input
+                                class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500"
+                                placeholder="Enter a title..."
+                                [value]="title()"
+                                (input)="title.set($any($event.target).value)" />
+                        </div>
+                        <div class="w-full md:w-72 md:shrink-0">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">LLM</label>
+                            <twang-tree-dropdown
+                                placeholder="Select provider / model"
+                                [nodes]="treeNodes()"
+                                [multiselect]="false"
+                                [checkbox]="false"
+                                size="md"
+                                [selected]="selectedLeaf()"
+                                (selectedChange)="selectedLeaf.set($event)">
+                            </twang-tree-dropdown>
+                        </div>
+                        <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 md:pb-2 shrink-0">
+                            <input type="checkbox"
+                                [checked]="stream()"
+                                (change)="stream.set($any($event.target).checked)"
+                                class="size-4 accent-primary-600" />
+                            Stream
+                        </label>
+                    </div>
+
+                </div>
+
+                <div class="flex-none px-4 md:px-6 py-2.5 md:py-4 border-t border-gray-200 flex justify-end">
+                    <twang-button
+                        label="Start Conversation"
+                        variant="primary"
+                        size="md"
+                        [disabled]="!isValid()"
+                        (buttonClick)="submit()">
+                    </twang-button>
+                </div>
+
+            </div>
+
+        } @else {
+            <div class="flex-1 flex items-center justify-center text-gray-400 text-sm">
+                Select an agent to get started
+            </div>
+        }
+
+    </div>
+
+</div>

@@ -11,6 +11,9 @@ export class AppStateService {
     selectedDashboardTab = signal<'overview' | 'reports'>('overview');
     searchChatQuery = signal('');
     selectedChatId = signal<string>(this.loadFromStorage('selectedChatId', ''));
+    selectedAgentConversationId = signal<string>(this.loadFromStorage('selectedAgentConversationId', ''));
+    showChatUsage = signal<boolean>(this.loadFromStorage('showChatUsage', false));
+    showAgentUsage = signal<boolean>(this.loadFromStorage('showAgentUsage', false));
     selectedAgentLlm = signal<string[]>(this.loadFromStorage('selectedAgentLlm', []));
 
     // Actions
@@ -21,6 +24,21 @@ export class AppStateService {
     selectChat(id: string) {
         this.selectedChatId.set(id);
         localStorage.setItem('selectedChatId', JSON.stringify(id));
+    }
+
+    selectAgentConversation(id: string) {
+        this.selectedAgentConversationId.set(id);
+        localStorage.setItem('selectedAgentConversationId', JSON.stringify(id));
+    }
+
+    setShowChatUsage(v: boolean) {
+        this.showChatUsage.set(v);
+        localStorage.setItem('showChatUsage', JSON.stringify(v));
+    }
+
+    setShowAgentUsage(v: boolean) {
+        this.showAgentUsage.set(v);
+        localStorage.setItem('showAgentUsage', JSON.stringify(v));
     }
 
     selectAgentLlm(leaf: string[]) {

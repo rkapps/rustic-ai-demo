@@ -1,16 +1,17 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { TwangButtonComponent } from '../../components/ui/twang-button/twang-button';
+import { UsageTableComponent } from '../usage/usage-table.component';
 import { LucideAngularModule } from 'lucide-angular';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, filter, map, startWith, switchMap } from 'rxjs';
+import { BehaviorSubject, filter, finalize, map, startWith, switchMap } from 'rxjs';
 import { DataService } from '../../core/services/data.services';
 import { AppStateService } from '../../core/services/app-state.service';
 import { Chat } from '../../models/chat';
 
 @Component({
   selector: 'app-chats-list',
-  imports: [TwangButtonComponent, RouterOutlet, LucideAngularModule],
+  imports: [TwangButtonComponent, RouterOutlet, LucideAngularModule, UsageTableComponent],
   templateUrl: './chats-list.component.html',
 })
 export default class ChatsListComponent {
@@ -21,9 +22,13 @@ export default class ChatsListComponent {
   private route = inject(ActivatedRoute);
 
   private refresh$ = new BehaviorSubject<void>(undefined);
+  refreshing = signal(false);
 
   chatsSignal = toSignal(
-    this.refresh$.pipe(switchMap(() => this.dataService.getChats())),
+    this.refresh$.pipe(switchMap(() => {
+      this.refreshing.set(true);
+      return this.dataService.getChats().pipe(finalize(() => this.refreshing.set(false)));
+    })),
     { initialValue: [] }
   );
 
@@ -49,6 +54,7 @@ export default class ChatsListComponent {
 
   panelOpen = signal(true);
   showDetail = signal(window.innerWidth >= 768);
+  showUsage = this.appState.showChatUsage;
   selectedChatId = this.appState.selectedChatId;
 
   selectedChat = computed(() => this.chats().find(c => c.id === this.selectedChatId()) ?? null);

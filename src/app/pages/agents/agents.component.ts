@@ -1,204 +1,113 @@
-import { Component, computed, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, switchMap } from 'rxjs';
+import { BehaviorSubject, filter, finalize, map, startWith, switchMap } from 'rxjs';
 import { DataService } from '../../core/services/data.services';
 import { AppStateService } from '../../core/services/app-state.service';
 import { TwangButtonComponent } from '../../components/ui/twang-button/twang-button';
+import { UsageTableComponent } from '../usage/usage-table.component';
 import { LucideAngularModule } from 'lucide-angular';
-import { TwangTreeDropdownComponent } from '../../components/ui/twang-tree-dropdown/twang-tree-dropdown';
-import { TwangTreeDropdownNode } from '../../components/ui/twang-tree-dropdown/twang-tree-dropdown.models';
-import { MarkdownModule } from 'ngx-markdown';
-import { ChatChunkReponse, ChatMessage } from '../../models/chat';
-
-interface Agent {
-  id: string;
-  name: string;
-  description: string;
-}
+import { Chat } from '../../models/chat';
 
 @Component({
-  selector: 'app-agents',
-  imports: [TwangButtonComponent, TwangTreeDropdownComponent, MarkdownModule, LucideAngularModule],
-  templateUrl: './agents.component.html',
+    selector: 'app-agents',
+    imports: [TwangButtonComponent, RouterOutlet, LucideAngularModule, UsageTableComponent],
+    templateUrl: './agents.component.html',
 })
 export default class AgentsComponent {
 
-  private dataService = inject(DataService);
-  private appState = inject(AppStateService);
-  scrollContainer = viewChild<ElementRef>('scrollContainer');
+    private dataService = inject(DataService);
+    appState = inject(AppStateService);
+    private router = inject(Router);
+    private route = inject(ActivatedRoute);
 
-  readonly agents: Agent[] = [
-    { id: 'ticker-analysis', name: 'Ticker Analysis', description: 'Analyse stock tickers with AI' }
-  ];
+    private refresh$ = new BehaviorSubject<void>(undefined);
+    refreshing = signal(false);
 
-  panelOpen = signal(true);
-  showDetail = signal(false);
-  selectedAgent = signal<Agent | null>(this.agents[0]);
+    conversationsSignal = toSignal(
+        this.refresh$.pipe(switchMap(() => {
+            this.refreshing.set(true);
+            return this.dataService.getAgentConversations().pipe(finalize(() => this.refreshing.set(false)));
+        })),
+        { initialValue: [] }
+    );
 
-  private refresh$ = new BehaviorSubject<void>(undefined);
-  llmProviders = toSignal(
-    this.refresh$.pipe(switchMap(() => this.dataService.getLlmProviders())),
-    { initialValue: [] }
-  );
+    conversations = computed<Chat[]>(() => this.conversationsSignal());
 
-  treeNodes = computed<TwangTreeDropdownNode[]>(() =>
-    this.llmProviders().map(p => ({
-      id: `provider:${p.id}`,
-      label: p.llm,
-      children: p.models.map(m => ({ id: `${p.id}:${m}`, label: m }))
-    }))
-  );
+    panelOpen = signal(true);
+    showDetail = signal(window.innerWidth >= 768);
+    selectedConversationId = this.appState.selectedAgentConversationId;
+    showUsage = this.appState.showAgentUsage;
 
-  selectedLeaf = signal<string[]>(this.appState.selectedAgentLlm());
+    selectedConversation = computed(() =>
+        this.conversations().find(c => c.id === this.selectedConversationId()) ?? null
+    );
 
-  selectedLlm = computed(() => {
-    const leaf = this.selectedLeaf()[0];
-    if (!leaf) return '';
-    return leaf.split(':')[0];
-  });
+    private navUrl = toSignal(
+        this.router.events.pipe(
+            filter(e => e instanceof NavigationEnd),
+            map(() => this.router.url),
+            startWith(this.router.url)
+        ),
+        { initialValue: this.router.url }
+    );
 
-  selectedModel = computed(() => {
-    const leaf = this.selectedLeaf()[0];
-    if (!leaf) return '';
-    return leaf.substring(leaf.indexOf(':') + 1);
-  });
+    constructor() {
+        this.appState.refresh$.pipe(takeUntilDestroyed()).subscribe(() => this.onRefresh());
 
-  messages = signal<ChatMessage[]>([]);
-  lastResponseId = signal('');
-  prompt = signal('Compare NVIDIA to peers');
-  isLoading = signal(false);
-  listening = signal(false);
-  speechSupported = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
-  private recognition: any = null;
-  private streaming = false;
-  private streamingContent = '';
+        effect(() => {
+            const conversations = this.conversations();
+            this.navUrl();
+            if (conversations.length === 0) return;
 
-  isValid = computed(() => this.prompt().trim() !== '');
+            const childRoute = this.route.firstChild;
+            if (childRoute) {
+                const routeId = childRoute.snapshot?.params?.['id'];
+                if (routeId) {
+                    const found = conversations.find(c => c.id === routeId);
+                    if (found) this.appState.selectAgentConversation(found.id);
+                }
+                return;
+            }
 
-  constructor() {
-    this.appState.refresh$.pipe(takeUntilDestroyed()).subscribe(() => this.onRefresh());
-
-    effect(() => this.appState.selectAgentLlm(this.selectedLeaf()));
-
-    effect(() => {
-      this.messages();
-      setTimeout(() => {
-        const el = this.scrollContainer()?.nativeElement;
-        if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
-      }, 50);
-    });
-  }
-
-  onRefresh() {
-    this.refresh$.next();
-  }
-
-  backToList() {
-    this.showDetail.set(false);
-  }
-
-  onAgentSelected(agent: Agent) {
-    this.selectedAgent.set(agent);
-    this.showDetail.set(true);
-    this.messages.set([]);
-    this.lastResponseId.set('');
-    this.prompt.set('Compare NVIDIA to peers');
-    this.isLoading.set(false);
-    this.streaming = false;
-  }
-
-  submit() {
-    if (!this.isValid() || this.isLoading()) return;
-    if (!this.selectedLlm() || !this.selectedModel()) return;
-
-    const userPrompt = this.prompt();
-    this.messages.update(m => [...m, { id: m.length, role: 'user', content: userPrompt, response_id: '' }]);
-    this.isLoading.set(true);
-    this.streaming = true;
-    this.streamingContent = '';
-
-    this.dataService.analyseTickersStreaming({
-      llm: this.selectedLlm(),
-      model: this.selectedModel(),
-      prompt: userPrompt,
-      prev_response_id: this.lastResponseId() || undefined
-    }).subscribe({
-      next: (chunk: ChatChunkReponse) => {
-        if (!this.streaming) return;
-
-        if (this.streamingContent === '') {
-          this.messages.update(m => [...m, { id: m.length, role: 'assistant', content: '', response_id: '' }]);
-        }
-        this.streamingContent += chunk.content;
-        this.messages.update(msgs =>
-          msgs.map((msg, i) => i === msgs.length - 1 ? { ...msg, content: this.streamingContent, response_id: chunk.response_id } : msg)
-        );
-
-        if (chunk.is_final) {
-          this.lastResponseId.set(chunk.response_id);
-          this.streaming = false;
-          this.isLoading.set(false);
-          this.prompt.set('');
-        }
-      },
-      error: (err) => {
-        this.streaming = false;
-        this.isLoading.set(false);
-        const message = this.extractError(err);
-        this.messages.update(m => [...m, { id: m.length, role: 'system', content: message, response_id: '' }]);
-      }
-    });
-  }
-
-  private extractError(err: any): string {
-    if (!err) return 'Something went wrong. Please try again.';
-
-    // HTTP error response body
-    const body = err.error;
-    if (body?.error?.message) return body.error.message;
-    if (body?.message) return body.message;
-    if (typeof body === 'string' && body.trim()) return body;
-    if (err.status) return `Error ${err.status}: ${err.statusText ?? 'Unknown error'}`;
-
-    // SSE stream errors arrive as Error objects with message like:
-    // "Invalid JSON: Network error: Invalid request: {\"type\":\"error\",\"error\":{...}}"
-    const raw = err.message ?? '';
-    const jsonMatch = raw.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      try {
-        const parsed = JSON.parse(jsonMatch[0]);
-        if (parsed?.error?.message) return parsed.error.message;
-        if (parsed?.message) return parsed.message;
-      } catch {}
+            if (window.innerWidth < 768) {
+                this.showDetail.set(false);
+                return;
+            }
+            const target = conversations.find(c => c.id === this.selectedConversationId()) ?? conversations[0];
+            this.selectConversation(target);
+            this.showDetail.set(true);
+        }, { allowSignalWrites: true });
     }
 
-    return raw || 'Something went wrong. Please try again.';
-  }
-
-  onMicrophoneClick() {
-    if (this.listening()) {
-      this.recognition?.stop();
-      return;
+    onConversationSelected(conv: Chat) {
+        this.selectConversation(conv);
+        this.showDetail.set(true);
     }
-    const SpeechRecognition = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
-    this.recognition = new SpeechRecognition();
-    this.recognition.continuous = false;
-    this.recognition.interimResults = false;
-    this.recognition.lang = 'en-US';
-    this.recognition.onstart = () => this.listening.set(true);
-    this.recognition.onend = () => this.listening.set(false);
-    this.recognition.onerror = () => this.listening.set(false);
-    this.recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      this.prompt.set(this.prompt() + transcript);
-    };
-    this.recognition.start();
-  }
 
-  handleEnter(event: KeyboardEvent) {
-    if (!event.shiftKey) {
-      event.preventDefault();
-      this.submit();
+    onNewAgent() {
+        this.router.navigate(['/agents/new']);
     }
-  }
+
+    backToList() {
+        this.showDetail.set(false);
+    }
+
+    onRefresh() {
+        this.refresh$.next();
+    }
+
+    onDeleteConversation(conv: Chat) {
+        this.dataService.deleteChat(conv.id).subscribe({
+            next: () => {
+                this.appState.selectAgentConversation('');
+                this.refresh$.next();
+            }
+        });
+    }
+
+    private selectConversation(conv: Chat) {
+        this.appState.selectAgentConversation(conv.id);
+        this.router.navigate([conv.id], { relativeTo: this.route });
+    }
 }

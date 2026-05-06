@@ -1,4 +1,5 @@
 export * from './twang-button/twang-button';
+export * from './twang-datepicker/twang-datepicker';
 export * from './twang-nav-tabs/twang-nav-tabs';
 export * from './twang-nav-tabs/twang-nav-tabs.models';
 export * from './twang-dropdown/twang-dropdown';

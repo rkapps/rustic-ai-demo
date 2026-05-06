@@ -1,7 +1,9 @@
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse, HttpParams } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { Chat, ChatChunkReponse, ChatMessage, ChatStreamingMessage, ConversationRequest, Turn } from "../../models/chat";
 import { ChatTemplate } from "../../models/chat-template";
+import { Agent } from "../../models/agent";
+import { ConversationUsage, TurnUsage } from "../../models/usage";
 import { catchError, map, Observable, throwError } from "rxjs";
 import { LlmProvider } from "../../models/llm_provider";
 import { SseClient } from 'ngx-sse-client';
@@ -16,7 +18,28 @@ export class DataService extends BaseHttpService {
 
 
     getChats() {
-        return this.get<Chat[]>('/conversations');
+        return this.get<Chat[]>('/conversations?conversation_type=chat');
+    }
+
+    getAgentConversations() {
+        return this.get<Chat[]>('/conversations?conversation_type=agent');
+    }
+
+    getAgents() {
+        return this.get<Agent[]>('/agents');
+    }
+
+    getUsageConversations(filters: { conversationType?: string; llm?: string; startDate?: string; endDate?: string } = {}) {
+        let params = new HttpParams();
+        if (filters.conversationType) params = params.set('conversation_type', filters.conversationType);
+        if (filters.llm) params = params.set('llm', filters.llm);
+        if (filters.startDate) params = params.set('start_date', filters.startDate);
+        if (filters.endDate) params = params.set('end_date', filters.endDate);
+        return this.get<ConversationUsage[]>('/conversations', params);
+    }
+
+    getUsageTurns(conversationId: string) {
+        return this.get<TurnUsage[]>(`/conversations/${conversationId}/turns`);
     }
 
     getChatDetails(chat_id: string) {
