@@ -11,7 +11,7 @@ export const AGENT_ROUTES: Routes = [
         children: [
             {
                 path: ':id',
-                loadComponent: () => import('../chats/chat-detail.component'),
+                loadComponent: () => import('../../components/common/chat-detail/chat-detail.component'),
             },
         ],
     },

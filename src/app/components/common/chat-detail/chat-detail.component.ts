@@ -3,8 +3,8 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { forkJoin } from "rxjs";
 import { input, signal, effect, computed, ElementRef, viewChild } from "@angular/core";
 import { Router } from "@angular/router";
-import { Chat, ChatChunkReponse, ChatMessage, ChatRequest, Turn } from "../../models/chat";
-import { DataService } from "../../core/services/data.services";
+import { Chat, ChatChunkReponse, ChatMessage, ChatRequest, Turn } from "../../../models/chat";
+import { DataService } from "../../../core/services/data.services";
 import { MarkdownModule } from 'ngx-markdown';
 import { LucideAngularModule } from 'lucide-angular';
 
@@ -189,20 +189,13 @@ export default class ChatDetailComponent {
           this.streaming_content += data.content;
           this.messages.update(messages => messages.map((msg, index) =>
             index === messages.length - 1
-              ? { ...msg, content: this.streaming_content, response_id: data.response_id } // Update last item
-              : msg                          // Keep others as-is
+              ? { ...msg, content: this.streaming_content, response_id: data.response_id }
+              : msg
           ));
 
           if (data.is_final) {
             this.streaming = false;
             this.chatRequestForm.prompt.set('');
-            // let message = <ChatStreamingMessage>{
-            //   id: this.chat().id,
-            //   user_content: save_prompt,
-            //   assistant_content: this.streaming_content,
-            //   response_id: this.lastMessage()?.response_id ?? ""
-            // }
-            // this.dataService.saveChatStreamingMessage(message).subscribe();
           }
 
         }
@@ -216,11 +209,10 @@ export default class ChatDetailComponent {
 
   appendToMessages(role: 'user' | 'assistant' | 'system', content: string, response_id: string) {
 
-    // console.log('Raw content:', JSON.stringify(content));
     let formattedContent = content
-      .replace(/\n([A-D]\))/g, '  \n$1')     // Line break before A), B), C), D)
-      .replace(/\n(\d+\.\s)/g, '\n\n$1')    // Paragraph break before numbered lists
-      .replace(/\n\n/g, '\n\n')              // Keep double newlines as paragraph breaks
+      .replace(/\n([A-D]\))/g, '  \n$1')
+      .replace(/\n(\d+\.\s)/g, '\n\n$1')
+      .replace(/\n\n/g, '\n\n')
       .trim();
 
     this.count = this.count + 1;
@@ -265,10 +257,6 @@ export default class ChatDetailComponent {
   }
 
   handleEnter(_event: KeyboardEvent) {
-    // Submit on Enter, but allow Shift+Enter for new line
-    // if (!event.shiftKey) {
-    // event.preventDefault();
     this.submitPrompt();
-    // }
   }
 }

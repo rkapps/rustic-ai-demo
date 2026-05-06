@@ -12,6 +12,7 @@ export interface ConversationUsage {
     title: string;
     llm: string;
     model: string;
+    created_at?: string;
     usage: UsageStats;
     input_tokens_cost: number;
     cached_read_tokens_cost: number;
@@ -24,6 +25,7 @@ export interface TurnUsage {
     id: string;
     conversation_id: string;
     sequence: number;
+    created_at?: string;
     usage: UsageStats;
     input_tokens_cost: number;
     cached_read_tokens_cost: number;

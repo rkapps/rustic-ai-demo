@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { UsageTableComponent } from './usage-table.component';
+import { UsageTableComponent } from '../../components/common/usage-table/usage-table.component';
 import { TwangDatepickerComponent } from '../../components/ui/twang-datepicker/twang-datepicker';
 
 @Component({

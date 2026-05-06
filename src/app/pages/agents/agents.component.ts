@@ -5,7 +5,7 @@ import { BehaviorSubject, filter, finalize, map, startWith, switchMap } from 'rx
 import { DataService } from '../../core/services/data.services';
 import { AppStateService } from '../../core/services/app-state.service';
 import { TwangButtonComponent } from '../../components/ui/twang-button/twang-button';
-import { UsageTableComponent } from '../usage/usage-table.component';
+import { UsageTableComponent } from '../../components/common/usage-table/usage-table.component';
 import { LucideAngularModule } from 'lucide-angular';
 import { Chat } from '../../models/chat';
 
@@ -53,6 +53,7 @@ export default class AgentsComponent {
     );
 
     constructor() {
+        this.appState.setShowAgentUsage(false);
         this.appState.refresh$.pipe(takeUntilDestroyed()).subscribe(() => this.onRefresh());
 
         effect(() => {

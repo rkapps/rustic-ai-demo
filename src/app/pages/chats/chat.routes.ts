@@ -12,7 +12,7 @@ export const CHAT_ROUTES: Routes = [
         children: [
             {
                 path: ':id',
-                loadComponent: () => import('./chat-detail.component'),
+                loadComponent: () => import('../../components/common/chat-detail/chat-detail.component'),
             },
         ],
     },

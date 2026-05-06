@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges, computed, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, computed, signal } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
 
 import type { TwangTableFooterCell, TwangTableSplitCell } from '../twang-table/twang-table';
@@ -46,9 +46,17 @@ export class TwangTreeTableComponent<T extends object> implements OnChanges {
   @Input() initialExpandedDepth = 0;
   /** When true, the first root node is always expanded on init regardless of initialExpandedDepth. */
   @Input() initialExpandedFirstNode = false;
+  /** Emits the node id when the user expands a collapsed node (not on collapse). */
+  @Output() nodeExpand = new EventEmitter<string>();
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['nodes'] || changes['initialExpandedDepth'] || changes['initialExpandedFirstNode']) {
+    const nodesChange = changes['nodes'];
+    const optionsChanged = changes['initialExpandedDepth'] || changes['initialExpandedFirstNode'];
+    // Only reinit collapsed state on first load or when expand options change.
+    // Skip reinit on subsequent node updates (e.g. lazy-loaded children appended) so
+    // the user's expanded/collapsed state is preserved.
+    const isFirstLoad = nodesChange && !nodesChange.previousValue?.length;
+    if (isFirstLoad || optionsChanged) {
       this.initCollapsedState(this.nodesInput());
     }
   }
@@ -118,6 +126,7 @@ export class TwangTreeTableComponent<T extends object> implements OnChanges {
     const next = new Set(this.collapsedIds());
     if (next.has(nodeId)) {
       next.delete(nodeId);
+      this.nodeExpand.emit(nodeId);
     } else {
       next.add(nodeId);
     }

@@ -1,12 +1,11 @@
 import { Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { forkJoin } from 'rxjs';
-import { DataService } from '../../core/services/data.services';
-import { ConversationUsage, TurnUsage } from '../../models/usage';
-import { TwangButtonComponent } from '../../components/ui/twang-button/twang-button';
-import { TwangTreeTableComponent } from '../../components/ui/twang-tree-table/twang-tree-table';
-import { TwangTreeTableColumn, TwangTreeTableNode } from '../../components/ui/twang-tree-table/twang-tree-table.models';
-import { TwangTableFooterCell } from '../../components/ui/twang-table/twang-table';
+import { DataService } from '../../../core/services/data.services';
+import { ConversationUsage, TurnUsage } from '../../../models/usage';
+import { TwangButtonComponent } from '../../ui/twang-button/twang-button';
+import { TwangTreeTableComponent } from '../../ui/twang-tree-table/twang-tree-table';
+import { TwangTreeTableColumn, TwangTreeTableNode } from '../../ui/twang-tree-table/twang-tree-table.models';
+import { TwangTableFooterCell } from '../../ui/twang-table/twang-table';
 import { LucideAngularModule } from 'lucide-angular';
 
 interface UsageRow {
@@ -14,6 +13,7 @@ interface UsageRow {
     convType?: string;
     llm?: string;
     model?: string;
+    lastUpdatedAt?: string;
     inputTokens: number;
     outputTokens: number;
     totalTokens: number;
@@ -42,6 +42,7 @@ export class UsageTableComponent {
 
     treeNodes = signal<TwangTreeTableNode<UsageRow>[]>([]);
     loading = signal(false);
+    private loadedIds = new Set<string>();
 
     readonly columns: TwangTreeTableColumn<UsageRow>[] = [
         {
@@ -50,11 +51,21 @@ export class UsageTableComponent {
             isLabelColumn: true,
             value: r => r.label ?? '',
             fillRemaining: true,
-            minWidth: '200px',
+            minWidth: '250px',
         },
         { id: 'convType', header: 'Type', value: r => r.convType ?? '', width: '80px' },
         { id: 'llm', header: 'LLM', value: r => r.llm ?? '', width: '100px' },
         { id: 'model', header: 'Model', value: r => r.model ?? '', width: '180px', cellTruncate: false },
+        {
+            id: 'lastUpdatedAt', header: 'Created At', value: r => r.lastUpdatedAt ?? '',
+            format: v => {
+                if (!v) return '';
+                const d = new Date(v as string);
+                const pad = (n: number) => String(n).padStart(2, '0');
+                return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+            },
+            width: '160px',
+        },
         {
             id: 'inputTokens', header: 'In Tokens', value: r => r.inputTokens,
             format: v => Number(v).toLocaleString(), align: 'right', width: '100px',
@@ -72,12 +83,12 @@ export class UsageTableComponent {
             format: v => '$' + Number(v).toFixed(4), align: 'right', width: '96px',
         },
         {
-            id: 'totalTokens', header: 'Total Tokens', value: r => r.totalTokens,
-            format: v => Number(v).toLocaleString(), align: 'right', width: '120px',
+            id: 'totalTokens', header: 'Tokens', value: r => r.totalTokens,
+            format: v => Number(v).toLocaleString(), align: 'right', width: '100px',
         },
         {
-            id: 'totalCost', header: 'Total Cost', value: r => r.totalCost,
-            format: v => '$' + Number(v).toFixed(4), align: 'right', width: '96px',
+            id: 'totalCost', header: 'Cost', value: r => r.totalCost,
+            format: v => '$' + Number(v).toFixed(4), align: 'right', width: '80px',
         },
     ];
 
@@ -96,7 +107,7 @@ export class UsageTableComponent {
             };
         }, { inputTokens: 0, outputTokens: 0, totalTokens: 0, inputCost: 0, outputCost: 0, totalCost: 0 });
         return [
-            { text: `Total (${nodes.length})`, colspan: 4 },
+            { text: `Total (${nodes.length})`, colspan: 5 },
             { text: t.inputTokens.toLocaleString(), align: 'right' },
             { text: '$' + t.inputCost.toFixed(4), align: 'right' },
             { text: t.outputTokens.toLocaleString(), align: 'right' },
@@ -121,6 +132,9 @@ export class UsageTableComponent {
 
     load() {
         this.loading.set(true);
+        this.loadedIds.clear();
+        // Clear so ngOnChanges sees a first-load and reinits collapsed state for new nodes.
+        this.treeNodes.set([]);
         const convId = this.conversationId();
 
         if (convId) {
@@ -130,6 +144,23 @@ export class UsageTableComponent {
         }
     }
 
+    onNodeExpand(nodeId: string): void {
+        if (this.loadedIds.has(nodeId)) return;
+        this.loadedIds.add(nodeId);
+        this.dataService.getUsageTurns(nodeId)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+                next: (turns) => {
+                    this.treeNodes.update(nodes =>
+                        nodes.map(n => {
+                            if (n.id !== nodeId) return n;
+                            return { ...n, children: turns.map(t => this.buildTurnNode(t)) };
+                        })
+                    );
+                },
+            });
+    }
+
     private loadSingleConversation(convId: string) {
         this.dataService.getUsageConversations()
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -137,15 +168,8 @@ export class UsageTableComponent {
                 next: (convs) => {
                     const conv = convs.find(c => c.id === convId);
                     if (!conv) { this.treeNodes.set([]); this.loading.set(false); return; }
-                    this.dataService.getUsageTurns(conv.id)
-                        .pipe(takeUntilDestroyed(this.destroyRef))
-                        .subscribe({
-                            next: (turns) => {
-                                this.treeNodes.set([this.buildNode(conv, turns)]);
-                                this.loading.set(false);
-                            },
-                            error: () => this.loading.set(false),
-                        });
+                    this.treeNodes.set([this.buildConvNode(conv)]);
+                    this.loading.set(false);
                 },
                 error: () => this.loading.set(false),
             });
@@ -162,59 +186,58 @@ export class UsageTableComponent {
         }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
             next: (convs) => {
                 if (convs.length === 0) { this.treeNodes.set([]); this.loading.set(false); return; }
-                forkJoin(convs.map(c => this.dataService.getUsageTurns(c.id)))
-                    .pipe(takeUntilDestroyed(this.destroyRef))
-                    .subscribe({
-                        next: (turnsPerConv) => {
-                            this.treeNodes.set(convs.map((c, i) => this.buildNode(c, turnsPerConv[i])));
-                            this.loading.set(false);
-                        },
-                        error: () => this.loading.set(false),
-                    });
+                this.treeNodes.set(convs.map(c => this.buildConvNode(c)));
+                this.loading.set(false);
             },
             error: () => this.loading.set(false),
         });
     }
 
-    private buildNode(conv: ConversationUsage, turns: TurnUsage[]): TwangTreeTableNode<UsageRow> {
+    private buildConvNode(conv: ConversationUsage): TwangTreeTableNode<UsageRow> {
         const u = conv.usage;
+        const totalTokens = u?.total_tokens ?? 0;
         const convRow: UsageRow = {
             label: conv.title,
             convType: conv.conversation_type,
             llm: conv.llm,
             model: conv.model,
+            lastUpdatedAt: conv.created_at,
             inputTokens: (u?.input_tokens ?? 0) + (u?.cached_read_tokens ?? 0) + (u?.cached_write_tokens ?? 0),
             outputTokens: u?.output_tokens ?? 0,
-            totalTokens: u?.total_tokens ?? 0,
+            totalTokens,
             inputCost: (conv.input_tokens_cost ?? 0) + (conv.cached_read_tokens_cost ?? 0) + (conv.cached_write_tokens_cost ?? 0),
             outputCost: conv.output_tokens_cost ?? 0,
             totalCost: conv.total_tokens_cost ?? 0,
         };
-        if (turns.length === 0) {
+        if (totalTokens === 0) {
             return { id: conv.id, label: conv.title, depth: 0, data: convRow };
         }
+        // Sentinel child: invisible (data: null skipped by tree table) but gives parent an expand button
         return {
             id: conv.id,
             label: conv.title,
             depth: 0,
             summary: convRow,
-            children: turns.map(t => ({
-                id: t.id,
+            children: [{ id: '__sentinel__' + conv.id, label: '', depth: 1, data: null as unknown as UsageRow }],
+        };
+    }
+
+    private buildTurnNode(t: TurnUsage): TwangTreeTableNode<UsageRow> {
+        const u = t.usage;
+        return {
+            id: t.id,
+            label: `Turn ${t.sequence}`,
+            depth: 1,
+            data: {
                 label: `Turn ${t.sequence}`,
-                depth: 1,
-                data: (() => {
-                    const u = t.usage;
-                    return {
-                        label: `Turn ${t.sequence}`,
-                        inputTokens: (u?.input_tokens ?? 0) + (u?.cached_read_tokens ?? 0) + (u?.cached_write_tokens ?? 0),
-                        outputTokens: u?.output_tokens ?? 0,
-                        totalTokens: u?.total_tokens ?? 0,
-                        inputCost: (t.input_tokens_cost ?? 0) + (t.cached_read_tokens_cost ?? 0) + (t.cached_write_tokens_cost ?? 0),
-                        outputCost: t.output_tokens_cost ?? 0,
-                        totalCost: t.total_tokens_cost ?? 0,
-                    };
-                })(),
-            })),
+                lastUpdatedAt: t.created_at,
+                inputTokens: (u?.input_tokens ?? 0) + (u?.cached_read_tokens ?? 0) + (u?.cached_write_tokens ?? 0),
+                outputTokens: u?.output_tokens ?? 0,
+                totalTokens: u?.total_tokens ?? 0,
+                inputCost: (t.input_tokens_cost ?? 0) + (t.cached_read_tokens_cost ?? 0) + (t.cached_write_tokens_cost ?? 0),
+                outputCost: t.output_tokens_cost ?? 0,
+                totalCost: t.total_tokens_cost ?? 0,
+            },
         };
     }
 }

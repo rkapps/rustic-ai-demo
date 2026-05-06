@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { TwangButtonComponent } from '../../components/ui/twang-button/twang-button';
-import { UsageTableComponent } from '../usage/usage-table.component';
+import { UsageTableComponent } from '../../components/common/usage-table/usage-table.component';
 import { LucideAngularModule } from 'lucide-angular';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, filter, finalize, map, startWith, switchMap } from 'rxjs';
