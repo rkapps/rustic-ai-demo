@@ -125,12 +125,12 @@
                               }
                             </button>
                           } @else {
-                            <span class="twang-tree-leaf-plain flex items-center">
+                            <span class="twang-tree-leaf-plain" [class.items-center]="!col.leafWrap" [class.items-start]="col.leafWrap">
                               <span
                                 class="twang-tree-indent shrink-0"
                                 [style.width.px]="flat.node.depth * 16 + 20"
                               ></span>
-                              {{ displayValue(col, flat.rowData) }}
+                              <span [class.line-clamp-2]="col.leafWrap" [class.break-words]="col.leafWrap" [class.min-w-0]="col.leafWrap">{{ displayValue(col, flat.rowData) }}</span>
                             </span>
                           }
                         }

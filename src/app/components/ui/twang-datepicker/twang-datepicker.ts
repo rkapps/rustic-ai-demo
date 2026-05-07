@@ -21,6 +21,7 @@ const DAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 @Component({
   selector: 'twang-datepicker',
   standalone: true,
+  host: { class: 'block w-full' },
   imports: [CommonModule, LucideAngularModule],
   templateUrl: './twang-datepicker.html',
   styleUrl: './twang-datepicker.css',

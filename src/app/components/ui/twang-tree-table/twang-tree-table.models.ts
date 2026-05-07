@@ -11,6 +11,8 @@ export type { TwangTableFooterCell, TwangTableSplitCell };
  */
 export interface TwangTreeTableColumn<T> extends TwangTableColumn<T> {
   isLabelColumn?: boolean;
+  /** When true, leaf label text wraps up to 2 lines instead of truncating. */
+  leafWrap?: boolean;
 }
 
 /**

@@ -2,10 +2,9 @@
 
     <!-- Desktop: collapsed panel toggle -->
     @if (!panelOpen()) {
-        <button class="hidden md:flex flex-none self-start mt-0.5 h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 shadow-sm transition-colors"
-            (click)="panelOpen.set(true)" aria-label="Open chat list">
-            <lucide-icon name="menu" [size]="18"></lucide-icon>
-        </button>
+        <div class="hidden md:flex self-start mt-0.5">
+            <twang-button icon="menu" variant="default" size="sm" ariaLabel="Open chat list" (buttonClick)="panelOpen.set(true)"></twang-button>
+        </div>
     }
 
     <!-- Left column: chat list -->
@@ -67,6 +66,9 @@
             @if (selectedChat(); as chat) {
                 <div class="flex-none px-4 md:px-6 py-2.5 md:py-4 border-b border-gray-200 flex items-center gap-2">
                     <div class="flex-1 text-base font-semibold text-primary-600 truncate">{{ chat.title }}</div>
+                    @if (showUsage()) {
+                        <twang-button icon="refresh-cw" variant="default" size="sm" ariaLabel="Refresh usage" [loading]="chatUsageTable?.loading() ?? false" (buttonClick)="chatUsageTable?.load()"></twang-button>
+                    }
                     <twang-button icon="message-square" variant="default" size="sm" ariaLabel="Show chat"
                         [class.text-primary-600]="!showUsage()"
                         (buttonClick)="appState.setShowChatUsage(false)">
@@ -88,7 +90,7 @@
                 <router-outlet />
             </div>
             @if (showUsage()) {
-                <app-usage-table [conversationId]="selectedChatId()"></app-usage-table>
+                <app-usage-table #chatUsageTable [conversationId]="selectedChatId()"></app-usage-table>
             }
         </div>
 

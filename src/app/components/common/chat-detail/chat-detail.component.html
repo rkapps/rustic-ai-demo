@@ -20,7 +20,34 @@
                     <markdown [data]="msg.content" class="prose prose-sm max-w-none">
                     </markdown>
                 </div>
+            </div>
+        }
 
+        <!-- Typing indicator: shown while waiting for first content chunk -->
+        @if (isLoading() && (lastMessage()?.role === 'user' || (lastMessage()?.role === 'assistant' && !lastMessage()?.content?.trim()))) {
+            <div class="flex justify-start mb-4">
+                <div
+                    class="analyse-ai-streaming-indicator flex min-w-0 max-w-full shrink items-center gap-2 rounded-lg border border-primary-500/20 bg-primary-50/80 px-3 py-2 text-xs text-primary-900"
+                    role="status"
+                    aria-live="polite">
+                    <span class="relative flex h-2 w-2 shrink-0">
+                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary-500 opacity-75"></span>
+                        <span class="relative inline-flex h-2 w-2 rounded-full bg-primary-600"></span>
+                    </span>
+                    <span class="font-medium">Assistant is responding</span>
+                    <span class="analyse-ai-streaming-dots inline-flex gap-0.5 pl-0.5 text-primary-600" aria-hidden="true">
+                        <span class="analyse-ai-streaming-dot"></span>
+                        <span class="analyse-ai-streaming-dot"></span>
+                        <span class="analyse-ai-streaming-dot"></span>
+                    </span>
+                </div>
+            </div>
+        }
+
+        <!-- Stream error -->
+        @if (streamError(); as err) {
+            <div class="rounded-lg border border-danger-600/30 bg-danger-50 px-4 py-2 text-sm text-danger-600 mb-4">
+                {{ err }}
             </div>
         }
     </div>

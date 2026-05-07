@@ -16,7 +16,8 @@ import { LucideAngularModule } from 'lucide-angular';
     MarkdownModule,
     LucideAngularModule,
   ],
-  templateUrl: './chat-detail.component.html'
+  templateUrl: './chat-detail.component.html',
+  styleUrl: './chat-detail.component.css'
 })
 export default class ChatDetailComponent {
   id = input<string>('');
@@ -32,6 +33,7 @@ export default class ChatDetailComponent {
   streaming_content = "";
   messages = signal<ChatMessage[]>([]);
   isLoading = signal<boolean>(false);
+  streamError = signal<string | null>(null);
   lastResponseId = signal<string>('');
   listening = signal(false);
   speechSupported = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
@@ -138,7 +140,8 @@ export default class ChatDetailComponent {
 
 
   private postChatRequest(prompt: string) {
-
+    this.streamError.set(null);
+    this.isLoading.set(true);
     const previous_response_id = this.lastMessage()?.response_id ?? "";
     this.request.update(p => ({
       ...p,
@@ -164,7 +167,12 @@ export default class ChatDetailComponent {
         this.appendToMessages(data.role, data.content, data.response_id);
         this.request.update(p => ({ ...p, prompt: "" }));
         this.chatRequestForm.prompt.set('');
-      }
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        this.streamError.set(err?.message ?? 'An error occurred. Please try again.');
+        this.isLoading.set(false);
+      },
     });
   }
 
@@ -195,13 +203,16 @@ export default class ChatDetailComponent {
 
           if (data.is_final) {
             this.streaming = false;
+            this.isLoading.set(false);
             this.chatRequestForm.prompt.set('');
           }
 
         }
       },
-      error: () => {
+      error: (err) => {
         this.streaming = false;
+        this.isLoading.set(false);
+        this.streamError.set(err?.message ?? 'An error occurred. Please try again.');
       }
 
     });

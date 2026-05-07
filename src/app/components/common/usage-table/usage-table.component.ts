@@ -2,7 +2,6 @@ import { Component, DestroyRef, computed, effect, inject, input, signal } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DataService } from '../../../core/services/data.services';
 import { ConversationUsage, TurnUsage } from '../../../models/usage';
-import { TwangButtonComponent } from '../../ui/twang-button/twang-button';
 import { TwangTreeTableComponent } from '../../ui/twang-tree-table/twang-tree-table';
 import { TwangTreeTableColumn, TwangTreeTableNode } from '../../ui/twang-tree-table/twang-tree-table.models';
 import { TwangTableFooterCell } from '../../ui/twang-table/twang-table';
@@ -25,7 +24,7 @@ interface UsageRow {
 @Component({
     selector: 'app-usage-table',
     host: { class: 'flex flex-col flex-1 min-h-0 overflow-hidden min-w-0' },
-    imports: [TwangButtonComponent, TwangTreeTableComponent, LucideAngularModule],
+    imports: [TwangTreeTableComponent, LucideAngularModule],
     templateUrl: './usage-table.component.html',
 })
 export class UsageTableComponent {
@@ -49,6 +48,7 @@ export class UsageTableComponent {
             id: 'title',
             header: 'Conversation',
             isLabelColumn: true,
+            leafWrap: true,
             value: r => r.label ?? '',
             fillRemaining: true,
             minWidth: '250px',
@@ -224,12 +224,13 @@ export class UsageTableComponent {
 
     private buildTurnNode(t: TurnUsage): TwangTreeTableNode<UsageRow> {
         const u = t.usage;
+        const label = t.user_prompt ? `${t.sequence}. ${t.user_prompt}` : `Turn ${t.sequence}`;
         return {
             id: t.id,
-            label: `Turn ${t.sequence}`,
+            label,
             depth: 1,
             data: {
-                label: `Turn ${t.sequence}`,
+                label,
                 lastUpdatedAt: t.created_at,
                 inputTokens: (u?.input_tokens ?? 0) + (u?.cached_read_tokens ?? 0) + (u?.cached_write_tokens ?? 0),
                 outputTokens: u?.output_tokens ?? 0,

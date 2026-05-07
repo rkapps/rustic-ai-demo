@@ -25,6 +25,7 @@ export interface TurnUsage {
     id: string;
     conversation_id: string;
     sequence: number;
+    user_prompt?: string;
     created_at?: string;
     usage: UsageStats;
     input_tokens_cost: number;
