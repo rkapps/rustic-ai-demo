@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { UserDropdownComponent } from './components/user-dropdown/user-dropdown.component';
 import { BreadcrumbService } from './core/services/breadcrumb.service';
 import { LucideAngularModule } from 'lucide-angular';
+import { PullToRefreshService } from './core/services/pull-to-refresh.service';
 
 @Component({
   selector: 'app-root',
@@ -26,27 +27,8 @@ export class AppComponent {
   toggleMenu() { this.isOpen.update(v => !v); }
   close() { this.isOpen.set(false); }
 
-  pullDistance = signal(0);
-  readonly PULL_THRESHOLD = 60;
-  private pullStartY = 0;
-  private pullScrollEl: HTMLElement | null = null;
-
-  onTouchStart(e: TouchEvent) {
-    this.pullScrollEl = (e.target as HTMLElement).closest<HTMLElement>('.overflow-y-auto');
-    this.pullStartY = e.touches[0].clientY;
-  }
-
-  onTouchMove(e: TouchEvent) {
-    if (!this.pullScrollEl) return;
-    if (this.pullScrollEl.scrollTop > 0) { this.pullDistance.set(0); return; }
-    const delta = e.touches[0].clientY - this.pullStartY;
-    if (delta > 0) this.pullDistance.set(Math.min(delta * 0.5, 80));
-  }
-
-  onTouchEnd() {
-    if (this.pullDistance() >= this.PULL_THRESHOLD) this.appState.triggerRefresh();
-    this.pullDistance.set(0);
-    this.pullScrollEl = null;
+  constructor() {
+    inject(PullToRefreshService).init();
   }
 }
 

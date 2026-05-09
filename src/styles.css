@@ -129,6 +129,10 @@
 
 
 
+@keyframes ptr-spin {
+  to { transform: rotate(360deg); }
+}
+
 @keyframes progress-loading {
     0% {
         transform: translateX(-100%);
