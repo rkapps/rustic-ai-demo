@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { forkJoin } from "rxjs";
+import { forkJoin, Subscription } from "rxjs";
 import { input, signal, effect, computed, ElementRef, viewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import { Chat, ChatChunkReponse, ChatMessage, ChatRequest, Turn } from "../../../models/chat";
@@ -28,6 +28,7 @@ export default class ChatDetailComponent {
 
   // State
   private initialLoad = true;
+  private activeRequest: Subscription | null = null;
   count = 0;
   streaming = false;
   streaming_content = "";
@@ -162,7 +163,7 @@ export default class ChatDetailComponent {
 
   private postNonStreamingChatCompletion() {
 
-    this.dataService.chatCompletion(this.id(), this.request().prompt).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.activeRequest = this.dataService.chatCompletion(this.id(), this.request().prompt).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         this.appendToMessages(data.role, data.content, data.response_id);
         this.request.update(p => ({ ...p, prompt: "" }));
@@ -181,7 +182,7 @@ export default class ChatDetailComponent {
     this.streaming_content = "";
     let first_chunk = true;
 
-    this.dataService.chatCompletionStream(this.id(), this.request().prompt).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.activeRequest = this.dataService.chatCompletionStream(this.id(), this.request().prompt).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
 
         if (first_chunk) {
@@ -265,6 +266,13 @@ export default class ChatDetailComponent {
     };
 
     this.recognition.start();
+  }
+
+  cancelStream() {
+    this.activeRequest?.unsubscribe();
+    this.activeRequest = null;
+    this.streaming = false;
+    this.isLoading.set(false);
   }
 
   handleEnter(event: KeyboardEvent) {

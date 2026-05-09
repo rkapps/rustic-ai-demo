@@ -67,14 +67,24 @@
                     (keydown.control.enter)="handleCtrlEnter($event)"
                     aria-label="Message">
                 </textarea>
+                @if (isLoading()) {
+                <button
+                    type="button"
+                    class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-red-400/80 text-white shadow-sm transition hover:bg-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400"
+                    (click)="cancelStream()"
+                    aria-label="Stop">
+                    <lucide-icon name="square" [size]="16"></lucide-icon>
+                </button>
+                } @else {
                 <button
                     type="button"
                     class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-sm transition hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 disabled:cursor-not-allowed disabled:opacity-50"
-                    [disabled]="isLoading() || !chatRequestForm.prompt().trim()"
+                    [disabled]="!chatRequestForm.prompt().trim()"
                     (click)="submitPrompt()"
                     aria-label="Send message">
                     <lucide-icon name="send" [size]="16"></lucide-icon>
                 </button>
+                }
                 @if (speechSupported) {
                 <button
                     type="button"

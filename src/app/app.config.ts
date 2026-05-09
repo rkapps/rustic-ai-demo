@@ -9,7 +9,7 @@ import {
   LucideAngularModule,
   Search, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Plus,
   RefreshCw, ChevronLeft, ChevronRight, ChevronDown, Trash2, LoaderCircle,
-  Menu, Send, MessageSquare, Mic, MicOff,
+  Menu, Send, MessageSquare, Mic, MicOff, Square,
   ArrowUpDown, Calendar, X,
   Bot, GraduationCap, Code, ChartBar, BookOpen, Briefcase, Brain, Globe,
   FlaskConical, Pencil, Calculator, Music, Image, FileText, Languages, MessageCircle,
@@ -30,7 +30,7 @@ export const appConfig: ApplicationConfig = {
       LucideAngularModule.pick({
         Search, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Plus,
         RefreshCw, ChevronLeft, ChevronRight, ChevronDown, Trash2, LoaderCircle,
-        Menu, Send, MessageSquare, Mic, MicOff,
+        Menu, Send, MessageSquare, Mic, MicOff, Square,
         ArrowUpDown, Calendar, X,
         Bot, GraduationCap, Code, ChartBar, BookOpen, Briefcase, Brain, Globe,
         FlaskConical, Pencil, Calculator, Music, Image, FileText, Languages, MessageCircle,
