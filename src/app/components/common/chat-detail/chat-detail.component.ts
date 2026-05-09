@@ -267,7 +267,21 @@ export default class ChatDetailComponent {
     this.recognition.start();
   }
 
-  handleEnter(_event: KeyboardEvent) {
+  handleEnter(event: KeyboardEvent) {
+    if (event.shiftKey || event.ctrlKey) return;
+    event.preventDefault();
     this.submitPrompt();
+  }
+
+  handleCtrlEnter(event: KeyboardEvent) {
+    event.preventDefault();
+    const textarea = event.target as HTMLTextAreaElement;
+    const start = textarea.selectionStart ?? textarea.value.length;
+    const end = textarea.selectionEnd ?? textarea.value.length;
+    const value = this.chatRequestForm.prompt();
+    this.chatRequestForm.prompt.set(value.substring(0, start) + '\n' + value.substring(end));
+    setTimeout(() => {
+      textarea.selectionStart = textarea.selectionEnd = start + 1;
+    });
   }
 }

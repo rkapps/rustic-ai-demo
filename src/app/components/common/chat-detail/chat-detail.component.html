@@ -64,6 +64,7 @@
                     [disabled]="isLoading()"
                     (input)="chatRequestForm.prompt.set($any($event.target).value)"
                     (keydown.enter)="handleEnter($event)"
+                    (keydown.control.enter)="handleCtrlEnter($event)"
                     aria-label="Message">
                 </textarea>
                 <button
