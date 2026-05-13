@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git -C /media/raghu/data2/Workspace/Projects/rustic-ai-demo add src/app/app.component.html src/app/pages/agents/agents.component.html src/app/pages/agents/agents.component.ts src/app/pages/chats/chat-detail.component.html src/app/pages/chats/chats-list.component.html src/app/pages/chats/chats-list.component.ts src/app/pages/chats/new-chat.component.html src/app/pages/chats/new-chat.component.ts)",
+      "Bash(git -C /media/raghu/data2/Workspace/Projects/rustic-ai-demo commit -m ' *)",
+      "Bash(git -C /media/raghu/data2/Workspace/Projects/rustic-ai-demo add src/app/pages/login/login.component.ts)",
+      "Bash(git -C /media/raghu/data2/Workspace/Projects/rustic-ai-demo add src/app/app.component.html src/app/core/services/app-state.service.ts src/app/pages/agents/agents.component.html src/app/pages/chats/chats-list.component.html src/app/pages/chats/chats-list.component.ts src/app/pages/login/login.component.ts)",
+      "Bash(npx tsc *)",
+      "Bash(grep -n \"Turn \\\\${t.sequence}\" /media/raghu/data2/Workspace/Projects/rustic-ai-demo/src/app/pages/usage/usage-table.component.ts)",
+      "Bash(echo \"\" >> /media/raghu/data2/Workspace/Projects/rustic-ai-demo/src/styles.css)"
+    ],
+    "additionalDirectories": [
+      "/media/raghu/data2/Workspace/Projects/rustic-ai-demo/src"
+    ]
+  }
+}
